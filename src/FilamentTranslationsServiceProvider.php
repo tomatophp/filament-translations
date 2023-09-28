@@ -9,7 +9,6 @@ class FilamentTranslationsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-
         //Register ConfigTomatoPHP file
         $this->mergeConfigFrom(__DIR__.'/../config/filament-translations.php', 'filament-translations');
 
@@ -43,40 +42,6 @@ class FilamentTranslationsServiceProvider extends ServiceProvider
 
         //Register Routes
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-
-        //Check Show Switcher
-//        if (config('filament-translations.show-switcher')) {
-//            Filament::serving(function () {
-//                if(auth()->user()){
-//                    app()->setLocale(auth()->user()->lang);
-//                }
-//                if(config('filament-translations.languages-switcher-menu.position') === 'navigation'){
-//                    Filament::registerNavigationItems([
-//                        NavigationItem::make()
-//                            ->group(config('filament-translations.languages-switcher-menu.group'))
-//                            ->icon(config('filament-translations.languages-switcher-menu.icon'))
-//                            ->label(trans('filament-translations::translation.menu'))
-//                            ->sort(config('filament-translations.languages-switcher-menu.sort'))
-//                            ->url((string)url(config('filament-translations.languages-switcher-menu.url'))),
-//                    ]);
-//                }
-//                else if(config('filament-translations.languages-switcher-menu.position') === 'user'){
-//                    Filament::registerUserMenuItems([
-//                        UserMenuItem::make()
-//                            ->icon(config('filament-translations.languages-switcher-menu.icon'))
-//                            ->label(trans('filament-translations::translation.menu'))
-//                            ->sort(config('filament-translations.languages-switcher-menu.sort'))
-//                            ->url((string)url(config('filament-translations.languages-switcher-menu.url'))),
-//                    ]);
-//                }
-//
-//                Filament::registerNavigationGroups([
-//                    config('filament-translations.languages-switcher-menu.group')
-//                ]);
-//            });
-//        }
-
-
     }
 
     public function boot(): void

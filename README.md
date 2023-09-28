@@ -17,53 +17,25 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 ```bash
 composer require tomatophp/filament-translations
 ```
-after install your package please run this command
+
+## Publish Resource
+
+you can publish the resource to your project
 
 ```bash
-php artisan filament-translations:install
+php artisan vendor:publish --tag="filament-translations-migrations"
+```
+
+if you need to publish config
+
+```bash
+php artisan vendor:publish --tag="filament-translations-config"
 ```
 
 Run migration:
 
 ```bash
-php artisan vendor:publish --tag="filament-translations-migrations"
-php artisan vendor:publish --tag="filament-translations-config"
 php artisan migrate
-```
-
-In `config/app.php` (Laravel) or `bootstrap/app.php` (Lumen) you should replace Laravel's translation service provider
-
-```php
-Illuminate\Translation\TranslationServiceProvider::class,
-```
-
-by the one included in this package:
-
-```php
-Spatie\TranslationLoader\TranslationServiceProvider::class,
-```
-
-## Add Language Middleware
-
-go to app/Http/Kernel.php and add new middleware to $middlewareGroups
-
-```php
-    'web' => [
-        //...
-        \TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware::class,
-    ],
-```
-
-go to config/filament.php and add middleware to middleware auth array
-
-```php
-    'middleware' => [
-        'auth' => [
-            //...
-            \TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware::class
-        ],
-        //...
-    ];
 ```
 
 and now clear cache
