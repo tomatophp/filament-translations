@@ -72,10 +72,10 @@ and now clear cache
 php artisan optimize:clear
 ```
 
-finally reigster the plugin on /App/Providers/Filament/AdminPanelProvider.php
+finally reigster the plugin on `/App/Providers/Filament/AdminPanelProvider.php`
 
 ```php
-$panel->plugins(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
 ```
 
 
