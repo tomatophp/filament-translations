@@ -8,8 +8,9 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 ## Screenshots
 
 ![Screenshot of list](./arts/list-view.png)
-![Screenshot of settings](./arts/setting-view.png)
 ![Screenshot of edit](./arts/edit-view.png)
+![Screenshot of settings](./arts/setting-view.png)
+
 
 
 ## Installation
