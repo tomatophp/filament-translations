@@ -4,6 +4,7 @@ namespace TomatoPHP\FilamentTranslations;
 
 use Illuminate\Support\ServiceProvider;
 use Filament\Facades\Filament;
+use TomatoPHP\FilamentTranslations\Console\ImportCommand;
 
 class FilamentTranslationsServiceProvider extends ServiceProvider
 {
@@ -42,6 +43,12 @@ class FilamentTranslationsServiceProvider extends ServiceProvider
 
         //Register Routes
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
+        $this->app->singleton('command.filament-translations.import', function ($app) {
+            return new ImportCommand();
+        });
+        $this->commands('command.filament-translations.import');
+
     }
 
     public function boot(): void
