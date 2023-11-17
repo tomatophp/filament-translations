@@ -96,4 +96,12 @@ return [
     */
 
     'language_switcher_render_hook' => 'panels::user-menu.before',
+
+    /*
+    |--------------------------------------------------------------------------
+    |
+    | Add groups that should be excluded in translation import from files to database
+    |
+    */
+    'exclude_groups' => []
 ];
