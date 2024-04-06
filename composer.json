@@ -36,6 +36,7 @@
         "tomatophp/console-helpers": "^1.1",
         "filament/filament": "^3.0.0",
         "filament/notifications": "^3.0.0",
-        "spatie/laravel-translation-loader": "^2.7"
+        "spatie/laravel-translation-loader": "^2.7",
+        "maatwebsite/excel": "^3.1"
     }
 }

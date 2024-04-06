@@ -11,6 +11,8 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\TranslationLoader\LanguageLine;
 use TomatoPHP\FilamentTranslations\Models\Translation;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages;
 
@@ -69,8 +71,7 @@ class TranslationResource extends Resource
 
         foreach (config('filament-translations.locals') as $key => $lang) {
             $schema[] = Forms\Components\Textarea::make('text.'.$key)
-                ->label(trans('filament-translations::translation.lang.'.$key))
-                ->required();
+                ->label(trans('filament-translations::translation.lang.'.$key));
         }
 
         return $form->schema($schema);
@@ -100,7 +101,12 @@ class TranslationResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+               Tables\Filters\SelectFilter::make('group')
+                   ->label(trans('filament-translations::global.filter_by_group'))
+                   ->options(fn (): array => LanguageLine::query()->groupBy('group')->pluck('group','group')->all()),
+                Tables\Filters\Filter::make('text')
+                    ->label(trans('filament-translations::global.filter_by_null_text'))
+                    ->query(fn (Builder $query): Builder => $query->whereJsonContains('text',  []))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

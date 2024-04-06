@@ -8,6 +8,9 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\ListRecords;
+use Maatwebsite\Excel\Facades\Excel;
+use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
+use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 
@@ -34,6 +37,22 @@ class ListTranslations extends ListRecords
                 ->action('scan')
                 ->label(trans('filament-translations::translation.scan'))
         ];
+    }
+
+    public function export()
+    {
+        return Excel::download(new TranslationsExport(), date('d-m-Y-H-i-s') .'-translations.xlsx');
+    }
+
+    public function import(array $data)
+    {
+        $file = $data['file'];
+        Excel::import(new TranslationsImport, $file);
+
+        Notification::make()
+            ->title(trans('filament-translations::translation.uploaded'))
+            ->success()
+            ->send();
     }
 
     /**

@@ -16,6 +16,10 @@ return [
     "notification" => "Idioma definido com sucesso",
     "loaded" => "Lista de idiomas atualizada",
     "menu" => "Alterar idioma",
+    "uploaded" => "Translations has been uploaded successfully",
+    "import" => "Import",
+    "export" => "Export",
+    "import-file" => "Select Exported File After Translate It",
     "modal" => [
         "heading" => "Alterar idioma atual",
         "button" => "Salvar idioma",

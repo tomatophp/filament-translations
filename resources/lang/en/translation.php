@@ -15,6 +15,10 @@ return [
     "namespace" => "Namespace",
     "notification" => "Language has been changed succcess",
     "loaded" => "Translations list has been updated",
+    "uploaded" => "Translations has been uploaded successfully",
+    "import" => "Import",
+    "export" => "Export",
+    "import-file" => "Select Exported File After Translate It",
     "menu" => "Change Language",
     "modal" => [
         "heading" => "Update current language",

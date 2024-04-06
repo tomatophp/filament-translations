@@ -41,13 +41,13 @@ if(!function_exists('try_svg')) {
         </div>
     </button>
 
-    <div x-ref="panel" x-float.placement.bottom-end.flip.offset="{ offset: 8 }" x-transition:enter-start="opacity-0 scale-95" x-transition:leave-end="opacity-0 scale-95" class="ffi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10 max-w-[14rem]" style="display: none; left: 1152px; top: 59.5px;">
+    <div x-ref="panel" x-float.placement.bottom-end.flip.offset="{ offset: 8 }" x-transition:enter-start="opacity-0 scale-95" x-transition:leave-end="opacity-0 scale-95" class="ffi-dropdown-panel absolute z-10 divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10 max-w-[14rem]" style="display: none; left: 1152px; top: 59.5px;">
         <div class="filament-dropdown-list p-1">
             @foreach ($otherLanguages as $key=>$language)
                 @php $isCurrent = app()->getLocale() === $key; @endphp
                 <a
                     @class([
-                        'filament-dropdown-list-item filament-dropdown-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm outline-none text-gray-500 dark:text-gray-200',
+                        'filament-dropdown-list-item filament-dropdown-item group flex items-center whitespace-nowrap rounded-md p-2 text-sm outline-none text-gray-500 dark:text-gray-200',
                         'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5 hover:text-gray-700 focus:text-gray-500 dark:hover:text-gray-200 dark:focus:text-gray-400' => !$isCurrent,
                         'cursor-default' => $isCurrent,
                     ])
@@ -55,7 +55,7 @@ if(!function_exists('try_svg')) {
                         href="{{ route('filament-translations.switcher', ['lang' => $key]) }}"
                     @endif
                 >
-                    <span class="filament-dropdown-list-item-label truncate w-full text-start flex justify-content-start gap-3">
+                    <span class="filament-dropdown-list-item-label truncate text-start flex justify-content-start gap-3">
                        <div
                             @class([
                                 'w-6 h-4'

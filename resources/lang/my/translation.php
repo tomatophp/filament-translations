@@ -16,6 +16,10 @@ return [
     "notification" => "ဘာသာစကားပြောင်းပြီးပါပြီ",
     "loaded" => "ဘာသာစကား များကိုပြုပြင်ပြီးပါပြီ",
     "menu" => "ဘာသာစကားပြောင်းပါ",
+    "uploaded" => "Translations has been uploaded successfully",
+    "import" => "Import",
+    "export" => "Export",
+    "import-file" => "Select Exported File After Translate It",
     "modal" => [
         "heading" => "ဘာသာစကားပြောင်းပါ",
         "button" => "ပြောင်းပါ",
