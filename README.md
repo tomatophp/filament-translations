@@ -1,5 +1,11 @@
-![Screenshot of Login](./arts/screenshot.png)
+![Screenshot of Login](https://github.com/tomatophp/filament-translations/blob/master/arts/3x1io-tomato-translations.jpg)
+
 # Filament translations
+
+[![Latest Stable Version](https://poser.pugx.org/tomatophp/filament-translations/version.svg)](https://packagist.org/packages/tomatophp/filament-translations)
+[![PHP Version Require](http://poser.pugx.org/tomatophp/filament-translations/require/php)](https://packagist.org/packages/tomatophp/filament-translations)
+[![License](https://poser.pugx.org/tomatophp/filament-translations/license.svg)](https://packagist.org/packages/tomatophp/filament-translations)
+[![Downloads](https://poser.pugx.org/tomatophp/filament-translations/d/total.svg)](https://packagist.org/packages/tomatophp/filament-translations)
 
 Manage your translation with DB and cache, you can scan your languages tags like `trans()`, `__()`, and get the string inside and translate them use UI.
 
@@ -7,9 +13,9 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 
 ## Screenshots
 
-![Screenshot of list](./arts/list-view.png)
-![Screenshot of edit](./arts/edit-view.png)
-![Screenshot of settings](./arts/setting-view.png)
+![Screenshot of list](https://github.com/tomatophp/filament-translations/blob/master/arts/list-view.png)
+![Screenshot of edit](https://github.com/tomatophp/filament-translations/blob/master/arts/edit-view.png)
+![Screenshot of settings](https://github.com/tomatophp/filament-translations/blob/master/arts/setting-view.png)
 
 
 
