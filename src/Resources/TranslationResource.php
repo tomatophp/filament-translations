@@ -18,6 +18,7 @@ use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages;
 
 class TranslationResource extends Resource
 {
+
     protected static ?string $model = Translation::class;
 
     protected static ?string $slug = 'translations';
@@ -31,12 +32,17 @@ class TranslationResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return config('filament-translations.languages-switcher-menu.group', 'Translations');
+        return config('filament-translations.languages-switcher-menu.group', trans('filament-translations::translation.group'));
     }
 
     public static function getNavigationIcon(): string
     {
         return config('filament-translations.languages-switcher-menu.icon', 'heroicon-m-language');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return config('filament-translations.register_navigation', true);
     }
 
     public function getTitle(): string
