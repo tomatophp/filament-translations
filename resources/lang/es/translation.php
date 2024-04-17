@@ -3,7 +3,7 @@
 return [
     "title" => "Traducciones",
     "label" => "Traducciones",
-    "group" => "Grupo",
+    "group" => "Traducciones",
     "key" => "Llave",
     "text" => "Texto",
     "scan" => "Búsqueda de nuevos idiomas",
@@ -12,5 +12,5 @@ return [
     "export" => "Export",
     "import-file" => "Select Exported File After Translate It",
     "namespace" => "Namespace"
-    
+
 ];

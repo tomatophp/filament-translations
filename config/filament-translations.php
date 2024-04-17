@@ -103,5 +103,13 @@ return [
     | Add groups that should be excluded in translation import from files to database
     |
     */
-    'exclude_groups' => []
+    'exclude_groups' => [],
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Register the navigation for the translations.
+     |
+     */
+    'register_navigation' => true,
 ];

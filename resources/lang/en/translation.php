@@ -8,7 +8,7 @@ return [
         "edit" => "Edit Translation",
     ],
     "label" => "Translations",
-    "group" => "Group",
+    "group" => "Translations",
     "key" => "Key",
     "text" => "Text",
     "scan" => "Scan For New Languages",
