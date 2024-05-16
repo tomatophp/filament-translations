@@ -112,4 +112,12 @@ return [
      |
      */
     'register_navigation' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Use Queue to scan the translations.
+     |
+     */
+    'use_queue_on_scan' => true,
 ];

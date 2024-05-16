@@ -4,6 +4,9 @@ namespace TomatoPHP\FilamentTranslations\Console;
 
 use Illuminate\Console\Command;
 use TomatoPHP\FilamentTranslations\Services\Manager;
+use TomatoPHP\FilamentTranslations\Services\SaveScan;
+use function Laravel\Prompts\progress;
+use function Laravel\Prompts\spin;
 
 class ImportCommand extends Command
 {
@@ -12,8 +15,7 @@ class ImportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'filament-translations:import 
-                                {--R|replace : Force replace values in database}';
+    protected $signature = 'filament-translations:import';
 
     /**
      * The console command description.
@@ -22,22 +24,21 @@ class ImportCommand extends Command
      */
     protected $description = 'Import translations from the language files';
 
-    protected Manager $manager;
-
-    public function __construct()
-    {
-        $this->manager = resolve(Manager::class);
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $replace = $this->option('replace');
-        $counter = $this->manager->importTranslations($replace);
-        $this->info('Done importing, processed '.$counter.' items!');
+        $response = spin(
+            function (){
+                $scan = new SaveScan();
+                $scan->save();
+            },
+            'Fetching keys...'
+        );
+
+        $this->info('Done importing');
     }
 
 }

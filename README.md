@@ -17,8 +17,6 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 ![Screenshot of edit](https://github.com/tomatophp/filament-translations/blob/master/arts/edit-view.png)
 ![Screenshot of settings](https://github.com/tomatophp/filament-translations/blob/master/arts/setting-view.png)
 
-
-
 ## Installation
 
 ```bash
@@ -57,6 +55,24 @@ finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 $panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
 ```
 
+## Scan Using Command Line
+
+you can scan your project to get all the languages tags and save them to the database
+
+
+```bash
+php artisan filament-translations:import
+```
+
+## Change Scan to work on Queue
+
+on your config file just change the `use_queue_on_scan` to `true`
+
+```php
+
+'use_queue_on_scan' => true,
+
+```
 
 ## Publish Assets
 

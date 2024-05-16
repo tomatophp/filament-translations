@@ -11,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 use Maatwebsite\Excel\Facades\Excel;
 use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
 use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
+use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 
@@ -60,8 +61,13 @@ class ListTranslations extends ListRecords
      */
     public function scan(): void
     {
-        $scan = new SaveScan();
-        $scan->save();
+        if(config('filament-translations.use_queue_on_scan')){
+            dispatch(new ScanJob());
+        }
+        else {
+            $scan = new SaveScan();
+            $scan->save();
+        }
 
         $this->notify('success', 'Translation Has Been Loaded');
     }
