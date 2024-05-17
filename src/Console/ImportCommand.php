@@ -30,6 +30,20 @@ class ImportCommand extends Command
      */
     public function handle()
     {
+        if (config('filament-translations.path_to_custom_import_command')) {
+            $response = spin(
+                function (){
+                    $command = config('filament-translations.path_to_custom_import_command');
+                    $command = new $command();
+                    $command->handle();
+                },
+                'Fetching keys...'
+            );
+
+            $this->info('Done importing');
+            return;
+        }
+
         $response = spin(
             function (){
                 $scan = new SaveScan();

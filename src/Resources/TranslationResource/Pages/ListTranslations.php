@@ -65,8 +65,22 @@ class ListTranslations extends ListRecords
             dispatch(new ScanJob());
         }
         else {
-            $scan = new SaveScan();
-            $scan->save();
+            if (! config('filament-translations.path_to_custom_import_command')) {
+                $scan = new SaveScan();
+                $scan->save();
+
+                $this->notify('success', 'Translation Has Been Loaded');
+                return; 
+            }
+
+            $response = spin(
+                function (){
+                    $command = config('filament-translations.path_to_custom_import_command');
+                    $command = new $command();
+                    $command->handle();
+                },
+                'Fetching keys...'
+            );
         }
 
         $this->notify('success', 'Translation Has Been Loaded');
