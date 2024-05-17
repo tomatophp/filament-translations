@@ -31,5 +31,6 @@ return [
         "en" => "English",
         "pt_BR" => "Português (Brasil)",
         "my" => "Burmese",
+        "nl" => "Dutch",
     ]
 ];
