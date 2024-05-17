@@ -80,9 +80,6 @@ class TranslationResource extends Resource
     {
         $table
             ->columns([
-                Tables\Columns\TextColumn::make('group')
-                    ->label(trans('filament-translations::translation.group'))
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('key')
                     ->label(trans('filament-translations::translation.key'))
                     ->sortable()
@@ -90,14 +87,6 @@ class TranslationResource extends Resource
                 Tables\Columns\TextColumn::make('text')
                     ->label(trans('filament-translations::translation.text'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label(trans('filament-translations::global.created_at'))
-                    ->dateTime('M j, Y')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label(trans('filament-translations::global.updated_at'))
-                    ->dateTime('M j, Y')
-                    ->sortable(),
             ])
             ->filters([
                Tables\Filters\SelectFilter::make('group')
