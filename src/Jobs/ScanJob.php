@@ -21,6 +21,7 @@ class ScanJob implements ShouldQueue
     {
         if (config('filament-translations.path_to_custom_import_command')) {
             $command = config('filament-translations.path_to_custom_import_command');
+            $command = new $command();
             $command->handle();
             return;
         }
