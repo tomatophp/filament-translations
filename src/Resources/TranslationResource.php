@@ -60,15 +60,8 @@ class TranslationResource extends Resource
                 ->required()
                 ->disabled()
                 ->maxLength(255),
-            Forms\Components\TextInput::make('namespace')
-                ->label(trans('filament-translations::translation.namespace'))
-                ->required()
-                ->disabled()
-                ->default('*')
-                ->maxLength(255),
             Forms\Components\TextInput::make('key')
                 ->label(trans('filament-translations::translation.key'))
-                ->columnSpan(2)
                 ->disabled()
                 ->required()
                 ->maxLength(255)
