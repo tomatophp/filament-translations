@@ -85,8 +85,13 @@ class ManageTranslations extends ManageRecords
 
     public function scan()
     {
-        $scan = new SaveScan();
-        $scan->save();
+        if(config('filament-translations.use_queue_on_scan')){
+            dispatch(new ScanJob());
+        }
+        else {
+            $scan = new SaveScan();
+            $scan->save();
+        }
 
         Notification::make()
             ->title(trans('filament-translations::translation.loaded'))
