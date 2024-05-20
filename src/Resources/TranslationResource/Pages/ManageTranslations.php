@@ -13,6 +13,7 @@ use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Http\Request;
 use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
 use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
+use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 use Filament\Notifications\Notification;
