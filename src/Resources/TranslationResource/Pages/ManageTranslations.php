@@ -13,6 +13,7 @@ use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Http\Request;
 use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
 use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
+use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 use Filament\Notifications\Notification;
@@ -85,8 +86,13 @@ class ManageTranslations extends ManageRecords
 
     public function scan()
     {
-        $scan = new SaveScan();
-        $scan->save();
+        if(config('filament-translations.use_queue_on_scan')){
+            dispatch(new ScanJob());
+        }
+        else {
+            $scan = new SaveScan();
+            $scan->save();
+        }
 
         Notification::make()
             ->title(trans('filament-translations::translation.loaded'))
