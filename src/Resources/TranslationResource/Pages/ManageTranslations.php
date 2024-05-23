@@ -2,22 +2,18 @@
 
 namespace TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages;
 
-use App\Models\User;
-use Faker\Core\File;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use function Laravel\Prompts\spin;
+use Maatwebsite\Excel\Facades\Excel;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\ButtonAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ManageRecords;
-use Illuminate\Http\Request;
-use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
-use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
 use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
+use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
+use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
-use Filament\Notifications\Notification;
-use Maatwebsite\Excel\Facades\Excel;
 
 
 class ManageTranslations extends ManageRecords
@@ -31,12 +27,17 @@ class ManageTranslations extends ManageRecords
 
     protected function getActions(): array
     {
-        return [
-            ButtonAction::make('scan')
+        $actions = [];
+
+        if (config('filament-translations.scan_enabled')) {
+            $actions[] = ButtonAction::make('scan')
                 ->icon('heroicon-m-magnifying-glass')
                 ->action('scan')
-                ->label(trans('filament-translations::translation.scan')),
-            Action::make('import')
+                ->label(trans('filament-translations::translation.scan'));
+        }
+
+        if (config('filament-translations.import_enabled')) {
+            $actions[] = Action::make('import')
                 ->label(trans('filament-translations::translation.import'))
                 ->form([
                     FileUpload::make('file')
@@ -59,18 +60,23 @@ class ManageTranslations extends ManageRecords
                 ->color('success')
                 ->action(function (array $data): void {
                     $this->import($data);
-                }),
-            Action::make('export')
+                });
+        }
+
+        if (config('filament-translations.export_enabled')) {
+            $actions[] = Action::make('export')
                 ->label(trans('filament-translations::translation.export'))
                 ->icon('heroicon-o-document-arrow-down')
                 ->color('danger')
-                ->action('export')
-        ];
+                ->action('export');
+        }
+
+        return $actions;
     }
 
     public function export()
     {
-        return Excel::download(new TranslationsExport(), date('d-m-Y-H-i-s') .'-translations.xlsx');
+        return Excel::download(new TranslationsExport(), date('d-m-Y-H-i-s') . '-translations.xlsx');
     }
 
     public function import(array $data)
@@ -84,16 +90,44 @@ class ManageTranslations extends ManageRecords
             ->send();
     }
 
-    public function scan()
+    public function scan(): void
     {
-        if(config('filament-translations.use_queue_on_scan')){
-            dispatch(new ScanJob());
+        if (config('filament-translations.use_queue_on_scan')) {
+            $this->dispatchScanJob();
+        } elseif (config('filament-translations.path_to_custom_import_command')) {
+            $this->runCustomImportCommand();
+        } else {
+            $this->saveScan();
         }
-        else {
-            $scan = new SaveScan();
-            $scan->save();
-        }
-
+    
+        $this->sendNotification();
+    }
+    
+    protected function dispatchScanJob(): void
+    {
+        dispatch(new ScanJob());
+    }
+    
+    protected function runCustomImportCommand(): void
+    {
+        spin(
+            function () {
+                $command = config('filament-translations.path_to_custom_import_command');
+                $command = new $command();
+                $command->handle();
+            },
+            'Fetching keys...'
+        );
+    }
+    
+    protected function saveScan(): void
+    {
+        $scan = new SaveScan();
+        $scan->save();
+    }
+    
+    protected function sendNotification(): void
+    {
         Notification::make()
             ->title(trans('filament-translations::translation.loaded'))
             ->success()

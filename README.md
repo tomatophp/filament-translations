@@ -23,15 +23,15 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 composer require tomatophp/filament-translations
 ```
 
-## Publish Resource
+### Publish Resource
 
-you can publish the resource to your project
+You can publish the resource to your project using:
 
 ```bash
 php artisan vendor:publish --tag="filament-translations-migrations"
 ```
 
-if you need to publish config
+If you need to publish config run:
 
 ```bash
 php artisan vendor:publish --tag="filament-translations-config"
@@ -43,30 +43,51 @@ Run migration:
 php artisan migrate
 ```
 
-and now clear cache
+and now clear cache running:
 
 ```bash
 php artisan optimize:clear
 ```
 
-finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
+### Publish Assets
+
+You can publish views file by use this command:
+
+```bash
+php artisan vendor:publish --tag="filament-translations-views"
+```
+
+You can publish languages file by use this command:
+
+```bash
+php artisan vendor:publish --tag="filament-translations-lang"
+```
+
+You can publish migrations file by use this command:
+
+```bash
+php artisan vendor:publish --tag="filament-translations-migrations"
+```
+
+Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
 ```
+## Usage
 
-## Scan Using Command Line
+### Scan Using Command Line
 
-you can scan your project to get all the languages tags and save them to the database
+You can scan your project to get all the languages tags and save them to the database
 
 
 ```bash
 php artisan filament-translations:import
 ```
 
-## Change Scan to work on Queue
+### Change Scan to work on Queue
 
-on your config file just change the `use_queue_on_scan` to `true`
+In your config file just change the `use_queue_on_scan` to `true`
 
 ```php
 
@@ -74,30 +95,24 @@ on your config file just change the `use_queue_on_scan` to `true`
 
 ```
 
-## Publish Assets
+### Custom Import Command
 
-you can publish config file by use this command
+You can create your own command to import the translations, add your custom import class to the config file like this:
 
-```bash
-php artisan vendor:publish --tag="filament-translations-config"
+```php
+    'path_to_custom_import_command' => ImportTranslations::class,
 ```
 
-you can publish views file by use this command
+This command will automatically run when you click on the "Scan For New Languages" button in the UI.
 
-```bash
-php artisan vendor:publish --tag="filament-translations-views"
-```
+### Show or hide buttons in the UI
 
-you can publish languages file by use this command
+You can show or hide the buttons in the UI by changing the config file. By default, all buttons are shown.
 
-```bash
-php artisan vendor:publish --tag="filament-translations-lang"
-```
-
-you can publish migrations file by use this command
-
-```bash
-php artisan vendor:publish --tag="filament-translations-migrations"
+```php
+    'show_import_button' => true,
+    'show_export_button' => false,
+    'show_scan_button' => false ,
 ```
 
 ## Support

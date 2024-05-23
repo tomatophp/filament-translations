@@ -35,8 +35,7 @@ return [
     |
     */
 
-    "excludedPaths" => [
-    ],
+    "excludedPaths" => [],
 
 
     /*
@@ -120,4 +119,22 @@ return [
      |
      */
     'use_queue_on_scan' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom import command.
+     |
+     */
+    'path_to_custom_import_command' => null,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Show buttons in Translation resource.
+     |
+     */
+    'scan_enabled' => true,
+    'export_enabled' => true,
+    'import_enabled' => true,
 ];

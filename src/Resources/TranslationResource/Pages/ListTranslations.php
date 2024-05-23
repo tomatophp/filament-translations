@@ -2,11 +2,8 @@
 
 namespace TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages;
 
-use App\Models\User;
-use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\ListRecords;
 use Maatwebsite\Excel\Facades\Excel;
 use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
@@ -14,6 +11,7 @@ use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
 use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
+use function Laravel\Prompts\spin;
 
 class ListTranslations extends ListRecords
 {
@@ -61,14 +59,37 @@ class ListTranslations extends ListRecords
      */
     public function scan(): void
     {
-        if(config('filament-translations.use_queue_on_scan')){
-            dispatch(new ScanJob());
+        if (config('filament-translations.use_queue_on_scan')) {
+            $this->dispatchScanJob();
+        } elseif (config('filament-translations.path_to_custom_import_command')) {
+            $this->runCustomImportCommand();
+        } else {
+            $this->saveScan();
         }
-        else {
-            $scan = new SaveScan();
-            $scan->save();
-        }
-
+    
         $this->notify('success', 'Translation Has Been Loaded');
+    }
+    
+    protected function dispatchScanJob(): void
+    {
+        dispatch(new ScanJob());
+    }
+    
+    protected function runCustomImportCommand(): void
+    {
+        spin(
+            function () {
+                $command = config('filament-translations.path_to_custom_import_command');
+                $command = new $command();
+                $command->handle();
+            },
+            'Fetching keys...'
+        );
+    }
+    
+    protected function saveScan(): void
+    {
+        $scan = new SaveScan();
+        $scan->save();
     }
 }
