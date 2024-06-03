@@ -1,4 +1,4 @@
-![Screenshot of Login](https://github.com/tomatophp/filament-translations/blob/master/arts/3x1io-tomato-translations.jpg)
+![Screenshot of Login](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg)
 
 # Filament translations
 
@@ -13,9 +13,9 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 
 ## Screenshots
 
-![Screenshot of list](https://github.com/tomatophp/filament-translations/blob/master/arts/list-view.png)
-![Screenshot of edit](https://github.com/tomatophp/filament-translations/blob/master/arts/edit-view.png)
-![Screenshot of settings](https://github.com/tomatophp/filament-translations/blob/master/arts/setting-view.png)
+![Screenshot of list](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/list-view.png)
+![Screenshot of edit](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/edit-view.png)
+![Screenshot of settings](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/setting-view.png)
 
 ## Installation
 
