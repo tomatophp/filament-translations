@@ -74,6 +74,17 @@ Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 ```php
 $panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
 ```
+
+## Use Language Switcher
+
+You can use the language switcher in your panel by using the following plugin:
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
+```
+
+**NOTE** your auth user table must have `lang` filed on the table to make this switch working fine.
+
 ## Usage
 
 ### Scan Using Command Line
@@ -100,7 +111,7 @@ In your config file just change the `use_queue_on_scan` to `true`
 You can create your own command to import the translations, add your custom import class to the config file like this:
 
 ```php
-    'path_to_custom_import_command' => ImportTranslations::class,
+'path_to_custom_import_command' => ImportTranslations::class,
 ```
 
 This command will automatically run when you click on the "Scan For New Languages" button in the UI.
