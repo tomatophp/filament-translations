@@ -19,21 +19,9 @@ class FilamentTranslationsPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel
-            ->resources([
-                TranslationResource::class
-            ]);
-
-        if (config('filament-translations.language_switcher')) {
-            $panel->renderHook(
-                config('filament-translations.language_switcher_render_hook'),
-                fn (): View => $this->getLanguageSwitcherView()
-            );
-
-            $panel->authMiddleware([
-                LanguageMiddleware::class,
-            ]);
-        }
+        $panel->resources([
+            TranslationResource::class
+        ]);
     }
 
     public function boot(Panel $panel): void
@@ -44,26 +32,5 @@ class FilamentTranslationsPlugin implements Plugin
     public static function make(): static
     {
         return new static();
-    }
-
-
-    /**
-     * Returns a View object that renders the language switcher component.
-     *
-     * @return \Illuminate\Contracts\View\View The View object that renders the language switcher component.
-     */
-    private function getLanguageSwitcherView(): View
-    {
-        $locales = config('filament-translations.locals');
-        $currentLocale = app()->getLocale();
-        $currentLanguage = collect($locales)->firstWhere('code', $currentLocale);
-        $otherLanguages = $locales;
-        $showFlags = config('filament-translations.show_flags');
-
-        return view('filament-translations::language-switcher', compact(
-            'otherLanguages',
-            'currentLanguage',
-            'showFlags',
-        ));
     }
 }

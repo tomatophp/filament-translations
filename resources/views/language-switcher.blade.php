@@ -52,7 +52,7 @@ if(!function_exists('try_svg')) {
                         'cursor-default' => $isCurrent,
                     ])
                     @if (!$isCurrent)
-                        href="{{ route('filament-translations.switcher', ['lang' => $key]) }}"
+                        href="{{ route('filament-translations.switcher', ['lang' => $key, 'model' => config('auth.providers.'.\Filament\Facades\Filament::getAuthGuard() . '.model'), 'model_id' => \Filament\Facades\Filament::auth()->user()->id]) }}"
                     @endif
                 >
                     <span class="filament-dropdown-list-item-label truncate text-start flex justify-content-start gap-3">

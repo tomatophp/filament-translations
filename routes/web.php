@@ -16,12 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/admin/languages/switcher', function (Request $request) {
+Route::get('/languages/switcher', function (Request $request) {
     $request->validate([
         'lang' => 'required|string',
+        'model' => 'required|string',
+        'model_id'=> 'required|integer'
     ]);
 
-    $user = User::find(auth()->user()->id);
+    $user = $request->get('model')::find($request->get('model_id'));
 
     $user->lang = $request->get('lang');
     $user->save();
