@@ -1,4 +1,4 @@
-![Screenshot of Login](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg)
+![Screenshot of Login](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpeg)
 
 # Filament translations
 
@@ -125,6 +125,25 @@ You can show or hide the buttons in the UI by changing the config file. By defau
     'show_export_button' => false,
     'show_scan_button' => false ,
 ```
+
+## Other Filament Packages
+
+- [Filament Users Resource](https://www.github.com/tomatophp/filament-users)
+- [Filament Settings Hub](https://www.github.com/tomatophp/filament-settings-hub)
+- [Filament Menus Generator](https://www.github.com/tomatophp/filament-menus)
+- [Filament Alerts Sender](https://www.github.com/tomatophp/filament-alerts)
+- [Filament Accounts Builder](https://www.github.com/tomatophp/filament-accounts)
+- [Filament Wallet Manager](https://www.github.com/tomatophp/filament-wallet)
+- [Filament Artisan Runner](https://www.github.com/tomatophp/filament-artisan)
+- [Filament File Browser](https://www.github.com/tomatophp/filament-browser)
+- [Filament Developer Gate](https://www.github.com/tomatophp/filament-developer-gate)
+- [Filament Locations Seeder](https://www.github.com/tomatophp/filament-locations)
+- [Filament Plugins Manager](https://www.github.com/tomatophp/filament-plugins)
+- [Filament Splade Integration](https://www.github.com/tomatophp/filament-splade)
+- [Filament Types Manager](https://www.github.com/tomatophp/filament-types)
+- [Filament Icons Picker](https://www.github.com/tomatophp/filament-icons)
+- [Filament Helpers Classes](https://www.github.com/tomatophp/filament-helpers)
+
 
 ## Support
 
