@@ -8,6 +8,7 @@ return [
         "edit" => "Edit Idiomas",
     ],
     "label" => "Idiomas",
+    "single" => "Idioma",
     "group" => "Idiomas",
     "key" => "Chave",
     "text" => "Texto",

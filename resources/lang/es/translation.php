@@ -3,6 +3,7 @@
 return [
     "title" => "Traducciones",
     "label" => "Traducciones",
+    "single" => "Traducción",
     "group" => "Traducciones",
     "key" => "Llave",
     "text" => "Texto",

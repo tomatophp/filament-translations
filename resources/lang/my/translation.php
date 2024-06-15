@@ -8,6 +8,7 @@ return [
         "edit" => "Edit ဘာသာစကား",
     ],
     "label" => "ဘာသာစကား",
+    "single" => "ဘာသာစကား",
     "group" => "ဘာသာစကား",
     "key" => "အဓိကသော့ချက်",
     "text" => "စာသား",
@@ -32,5 +33,5 @@ return [
         "pt_BR" => "Português (Brasil)",
         "my" => "Burmese",
         "nl" => "Dutch",
-    ]
+    ],
 ];

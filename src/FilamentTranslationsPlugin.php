@@ -12,6 +12,10 @@ use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 
 class FilamentTranslationsPlugin implements Plugin
 {
+    public bool $allowGPTScan = false;
+    public bool $allowClearTranslations = false;
+    public bool $allowCreate = false;
+
     public function getId(): string
     {
         return 'filament-translations';
@@ -22,6 +26,24 @@ class FilamentTranslationsPlugin implements Plugin
         $panel->resources([
             TranslationResource::class
         ]);
+    }
+
+    public function allowGPTScan(bool $allowGPTScan=true): self
+    {
+        $this->allowGPTScan = $allowGPTScan;
+        return $this;
+    }
+
+    public function allowClearTranslations(bool $allowClearTranslations=true): self
+    {
+        $this->allowClearTranslations = $allowClearTranslations;
+        return $this;
+    }
+
+    public function allowCreate(bool $allowCreate=true): self
+    {
+        $this->allowCreate = $allowCreate;
+        return $this;
     }
 
     public function boot(Panel $panel): void

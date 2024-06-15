@@ -8,6 +8,7 @@ return [
         "edit" => "Vertaling bewerken",
     ],
     "label" => "Vertalingen",
+    "single" => "Vertaling",
     "group" => "Vertalingen",
     "key" => "Sleutel",
     "text" => "Tekst",

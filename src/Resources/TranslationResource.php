@@ -2,7 +2,9 @@
 
 namespace TomatoPHP\FilamentTranslations\Resources;
 
+use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ActionGroup;
@@ -28,6 +30,11 @@ class TranslationResource extends Resource
     public static function getNavigationLabel(): string
     {
         return trans('filament-translations::translation.label');
+    }
+
+    public static function getLabel(): ?string
+    {
+        return trans('filament-translations::translation.single');
     }
 
     public static function getNavigationGroup(): ?string
@@ -58,11 +65,11 @@ class TranslationResource extends Resource
             Forms\Components\TextInput::make('group')
                 ->label(trans('filament-translations::translation.group'))
                 ->required()
-                ->disabled()
+                ->disabled(fn(Forms\Get $get) => $get('id') !== null)
                 ->maxLength(255),
             Forms\Components\TextInput::make('key')
                 ->label(trans('filament-translations::translation.key'))
-                ->disabled()
+                ->disabled(fn(Forms\Get $get) => $get('id') !== null)
                 ->required()
                 ->maxLength(255)
 
@@ -78,7 +85,43 @@ class TranslationResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $actions = [];
+        if (config('filament-translations.import_enabled')) {
+            $actions[] = Tables\Actions\Action::make('import')
+                ->label(trans('filament-translations::translation.import'))
+                ->form([
+                    FileUpload::make('file')
+                        ->label(trans('filament-translations::translation.import-file'))
+                        ->acceptedFileTypes([
+                            "application/csv",
+                            "application/vnd.ms-excel",
+                            "application/vnd.msexcel",
+                            "text/csv",
+                            "text/anytext",
+                            "text/plain",
+                            "text/x-c",
+                            "text/comma-separated-values",
+                            "inode/x-empty",
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        ])
+                        ->storeFiles(false)
+                ])
+                ->icon('heroicon-o-document-arrow-up')
+                ->color('success')
+                ->action(function (array $data): void {
+                    $this->import($data);
+                });
+        }
+
+        if (config('filament-translations.export_enabled')) {
+            $actions[] = Tables\Actions\Action::make('export')
+                ->label(trans('filament-translations::translation.export'))
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('danger')
+                ->action('export');
+        }
         $table
+            ->headerActions($actions)
             ->columns([
                 Tables\Columns\TextColumn::make('key')
                     ->label(trans('filament-translations::translation.key'))
@@ -86,6 +129,7 @@ class TranslationResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('text')
                     ->label(trans('filament-translations::translation.text'))
+                    ->view('filament-translations::text-column')
                     ->searchable(),
             ])
             ->filters([

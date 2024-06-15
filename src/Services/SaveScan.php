@@ -3,6 +3,7 @@
 namespace TomatoPHP\FilamentTranslations\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Lang;
 use TomatoPHP\FilamentTranslations\Services\Scan;
 use TomatoPHP\FilamentTranslations\Models\Translation;
 use Illuminate\Support\Facades\DB;
@@ -44,11 +45,11 @@ class SaveScan
                 } else {
                     list($namespace, $group) = $namespaceAndGroup;
                 }
-                $this->createOrUpdate($namespace, $group, $key);
+                $this->createOrUpdate($namespace, $group, $key, $trans);
             });
 
             $__->each(function ($default) {
-                $this->createOrUpdate('*', '*', $default);
+                $this->createOrUpdate('*', '*', $default, $default);
             });
         });
     }
@@ -58,7 +59,7 @@ class SaveScan
      * @param $group
      * @param $key
      */
-    protected function createOrUpdate($namespace, $group, $key): void
+    protected function createOrUpdate($namespace, $group, $key, $mainKey=null): void
     {
         /** @var Translation $translation */
         $translation = Translation::withTrashed()
@@ -74,11 +75,16 @@ class SaveScan
                 $translation->restore();
             }
         } else {
+            $locals = config('filament-translations.locals');
+            $text = [];
+            foreach ($locals as $locale => $lang) {
+                $text[$locale] = Lang::get($mainKey,[],$locale);
+            }
             $translation = Translation::make([
                 'namespace' => $namespace,
                 'group' => $group,
                 'key' => $key,
-                'text' => [],
+                'text' => $text,
             ]);
 
             if (!$this->isCurrentTransForTranslationArray($translation, $defaultLocale)) {

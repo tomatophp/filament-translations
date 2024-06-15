@@ -64,7 +64,7 @@ if(!function_exists('try_svg')) {
                         >
 
                         </div>
-                        <span @class(['font-semibold' => $isCurrent])>{{ str($language['label'])->ucfirst()->value() }}</span>
+                        <span @class(['font-semibold' => $isCurrent])>{{ trans('filament-translations::translation.lang.'.$key) }}</span>
                     </span>
                 </a>
             @endforeach

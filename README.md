@@ -23,6 +23,50 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 composer require tomatophp/filament-translations
 ```
 
+Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
+```
+
+
+### Allow ChatGPT Auto Transaltions
+
+If you want to use ChatGPT to auto-translate your languages, you need to install `OpenAI` package by running:
+
+```bash
+composer require openai-php/laravel
+```
+
+now you need to add the following to your `.env` file:
+
+```bash
+OPENAI_API_KEY=
+OPENAI_ORGANIZATION=
+```
+
+allow the feature on your panel proiver by adding the following:
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make()->allowGPTScan())
+```
+
+### Allow Create Button to Create New Language
+
+If you want to allow the user to create a new language, you need to add the following to your panel provider:
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make()->allowCreate())
+```
+
+### Allow Clear All Translations Button
+
+If you want to allow the user to clear all translations, you need to add the following to your panel provider:
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make()->allowClearTranslations())
+```
+
 ### Publish Resource
 
 You can publish the resource to your project using:
@@ -67,12 +111,6 @@ You can publish migrations file by use this command:
 
 ```bash
 php artisan vendor:publish --tag="filament-translations-migrations"
-```
-
-Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
-
-```php
-$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
 ```
 
 ## Use Language Switcher
