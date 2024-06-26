@@ -56,7 +56,8 @@ class Scan
             'Lang::trans',
             'Lang::transChoice',
             '@lang',
-            '@choice'
+            '@choice',
+            '__'
         ];
 
         $patternA =
