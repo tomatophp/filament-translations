@@ -6,7 +6,7 @@
 2. [Screenshots](#screenshots)
 3. [Installation](#installation)
     - [Allow ChatGPT Auto Translations](#allow-chatgpt-auto-translations)
-    - [Enable Google Translate Auto Translations](#enable-google-translate-auto-translations)
+    - [Allow Google Translate Auto Translations](#allow-google-translate-auto-translations)
     - [Allow Create Button to Create New Language](#allow-create-button-to-create-new-language)
     - [Allow Clear All Translations Button](#allow-clear-all-translations-button)
     - [Publish Resource](#publish-resource)

@@ -10,7 +10,7 @@ return [
     "label" => "Translations",
     "single" => "Translation",
     "group" => "Translations",
-    "language" => "Language",
+    "gpt_scan_language" => "Language",
     "gpt_scan" => "Use GPT",
     "gpt_scan_notification_start" => "GPT Scan has been started",
     "gpt_scan_notifications_done" => "GPT Scan has been completed",
