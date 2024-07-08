@@ -7,6 +7,8 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Str;
 use OpenAI\Laravel\Facades\OpenAI;
+use Stichoza\GoogleTranslate\GoogleTranslate;
+use TomatoPHP\FilamentTranslations\Jobs\ScanWithGoogleTranslate;
 use TomatoPHP\FilamentTranslations\Jobs\ScanWithGPT;
 use TomatoPHP\FilamentTranslations\Models\Translation;
 use function Laravel\Prompts\spin;
@@ -47,14 +49,14 @@ class ManageTranslations extends ManageRecords
                 ->requiresConfirmation()
                 ->icon('heroicon-o-link')
                 ->form([
-                    Select::make('lanuage')
+                    Select::make('language')
                         ->searchable()
                         ->options(collect(config('filament-translations.locals'))->pluck('label', 'label')->toArray())
                         ->label(trans('filament-translations::translation.gpt_scan_language'))
                         ->required()
                 ])
                 ->action(function (array $data){
-                    dispatch(new ScanWithGPT($data['lanuage'], auth()->user()->id,get_class(auth()->user())));
+                    dispatch(new ScanWithGPT($data['language'], auth()->user()->id,get_class(auth()->user())));
 
                     Notification::make()
                         ->title(trans('filament-translations::translation.gpt_scan_notification_start'))
@@ -64,6 +66,35 @@ class ManageTranslations extends ManageRecords
                 ->color('warning')
                 ->label(trans('filament-translations::translation.gpt_scan'));
         }
+
+	    if (filament('filament-translations')->allowGoogleTranslateScan && class_exists(GoogleTranslate::class)) {
+		    $actions[] = Action::make('google')
+			    ->requiresConfirmation()
+			    ->icon('heroicon-o-language')
+			    ->form([
+				    Select::make('language')
+					    ->searchable()
+					    ->options(
+						    collect(config('filament-translations.locals'))->mapWithKeys(function ($item, $key) {
+							    return [$key => $item['label']];
+						    })->toArray()
+					    )
+					    ->label(trans('filament-translations::translation.language'))
+					    ->required()
+			    ])
+			    ->action(function (array $data) {
+				    dispatch(
+					    new ScanWithGoogleTranslate(auth()->user(), $data['language'])
+				    );
+
+				    Notification::make()
+					    ->title(trans('filament-translations::translation.google_scan_notifications_start'))
+					    ->success()
+					    ->send();
+			    })
+			    ->color('warning')
+			    ->label(trans('filament-translations::translation.google_scan'));
+	    }
 
         if(filament('filament-translations')->allowClearTranslations){
             $actions[] = Action::make('clear')
