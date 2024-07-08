@@ -79,7 +79,7 @@ class ManageTranslations extends ManageRecords
 							    return [$key => $item['label']];
 						    })->toArray()
 					    )
-					    ->label(trans('filament-translations::translation.language'))
+					    ->label(trans('filament-translations::translation.gpt_scan_language'))
 					    ->required()
 			    ])
 			    ->action(function (array $data) {
