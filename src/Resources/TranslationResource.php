@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Spatie\TranslationLoader\LanguageLine;
 use TomatoPHP\FilamentTranslations\Models\Translation;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages;
+use TomatoPHP\FilamentTranslations\Services\ExcelImportExportService;
 
 class TranslationResource extends Resource
 {
@@ -108,9 +109,7 @@ class TranslationResource extends Resource
                 ])
                 ->icon('heroicon-o-document-arrow-up')
                 ->color('success')
-                ->action(function (array $data): void {
-                    $this->import($data);
-                });
+                ->action(fn(array $data) => ExcelImportExportService::import($data['file']));
         }
 
         if (config('filament-translations.export_enabled')) {
@@ -118,7 +117,7 @@ class TranslationResource extends Resource
                 ->label(trans('filament-translations::translation.export'))
                 ->icon('heroicon-o-document-arrow-down')
                 ->color('danger')
-                ->action('export');
+                ->action(fn() => ExcelImportExportService::export());
         }
         $table
             ->headerActions($actions)

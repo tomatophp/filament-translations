@@ -38,22 +38,6 @@ class ListTranslations extends ListRecords
         ];
     }
 
-    public function export()
-    {
-        return Excel::download(new TranslationsExport(), date('d-m-Y-H-i-s') .'-translations.xlsx');
-    }
-
-    public function import(array $data)
-    {
-        $file = $data['file'];
-        Excel::import(new TranslationsImport, $file);
-
-        Notification::make()
-            ->title(trans('filament-translations::translation.uploaded'))
-            ->success()
-            ->send();
-    }
-
     /**
      * @return void
      */

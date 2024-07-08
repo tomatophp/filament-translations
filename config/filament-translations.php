@@ -137,4 +137,20 @@ return [
     'scan_enabled' => true,
     'export_enabled' => true,
     'import_enabled' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom Excel export.
+     |
+     */
+    'path_to_custom_excel_export' => null,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom Excel import.
+     |
+     */
+    'path_to_custom_excel_import' => null,
 ];

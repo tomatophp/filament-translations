@@ -88,22 +88,6 @@ class ManageTranslations extends ManageRecords
         return $actions;
     }
 
-    public function export()
-    {
-        return Excel::download(new TranslationsExport(), date('d-m-Y-H-i-s') . '-translations.xlsx');
-    }
-
-    public function import(array $data)
-    {
-        $file = $data['file'];
-        Excel::import(new TranslationsImport, $file);
-
-        Notification::make()
-            ->title(trans('filament-translations::translation.uploaded'))
-            ->success()
-            ->send();
-    }
-
     public function scan(): void
     {
         if (config('filament-translations.use_queue_on_scan')) {
