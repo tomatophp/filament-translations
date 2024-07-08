@@ -13,6 +13,7 @@ use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 class FilamentTranslationsPlugin implements Plugin
 {
     public bool $allowGPTScan = false;
+    public bool $allowGoogleTranslateScan = false;
     public bool $allowClearTranslations = false;
     public bool $allowCreate = false;
 
@@ -31,6 +32,12 @@ class FilamentTranslationsPlugin implements Plugin
     public function allowGPTScan(bool $allowGPTScan=true): self
     {
         $this->allowGPTScan = $allowGPTScan;
+        return $this;
+    }
+
+    public function allowGoogleTranslateScan(bool $allowGoogleTranslateScan=true): self
+    {
+        $this->allowGoogleTranslateScan = $allowGoogleTranslateScan;
         return $this;
     }
 
