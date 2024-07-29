@@ -14,6 +14,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Config;
 use Spatie\TranslationLoader\LanguageLine;
 use TomatoPHP\FilamentTranslations\Models\Translation;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages;
@@ -27,6 +28,8 @@ class TranslationResource extends Resource
     protected static ?string $slug = 'translations';
 
     protected static ?string $recordTitleAttribute = 'key';
+
+    protected static bool $isScopedToTenant  = false;
 
     public static function getNavigationLabel(): string
     {
@@ -60,9 +63,7 @@ class TranslationResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $schema = [];
-
-        $schema = [
+        return $form->schema([
             Forms\Components\TextInput::make('group')
                 ->label(trans('filament-translations::translation.group'))
                 ->required()
@@ -72,16 +73,12 @@ class TranslationResource extends Resource
                 ->label(trans('filament-translations::translation.key'))
                 ->disabled(fn(Forms\Get $get) => $get('id') !== null)
                 ->required()
-                ->maxLength(255)
+                ->maxLength(255),
+            \TomatoPHP\FilamentTranslationComponent\Components\Translation::make('text')
+                ->label(trans('filament-translations::translation.text'))
+                ->columnSpanFull()
 
-        ];
-
-        foreach (config('filament-translations.locals') as $key => $lang) {
-            $schema[] = Forms\Components\Textarea::make('text.'.$key)
-                ->label(trans('filament-translations::translation.lang.'.$key));
-        }
-
-        return $form->schema($schema);
+        ]);
     }
 
     public static function table(Table $table): Table
