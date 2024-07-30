@@ -153,4 +153,15 @@ return [
      |
      */
     'path_to_custom_excel_import' => null,
+
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Language Switch Middlewares
+     |
+     */
+    'language_switcher_middlewares' => [
+        'web'
+    ]
 ];

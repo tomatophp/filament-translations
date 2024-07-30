@@ -40,4 +40,4 @@ Route::get('/languages/switcher', function (Request $request) {
 
     return redirect()->to(config('filament-translations.redirect'));
 
-})->middleware('web')->name('filament-translations.switcher');
+})->middleware(config('filament-translations.language_switcher_middlewares'))->name('filament-translations.switcher');
