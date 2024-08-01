@@ -34,6 +34,7 @@ class FilamentTranslationsPlugin implements Plugin
                 fn (): View => $this->getLanguageSwitcherView()
             );
 
+        }
     }
 
     public function allowGPTScan(bool $allowGPTScan=true): self
