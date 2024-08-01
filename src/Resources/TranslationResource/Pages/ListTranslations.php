@@ -38,22 +38,6 @@ class ListTranslations extends ListRecords
         ];
     }
 
-    public function export()
-    {
-        return Excel::download(new TranslationsExport(), date('d-m-Y-H-i-s') .'-translations.xlsx');
-    }
-
-    public function import(array $data)
-    {
-        $file = $data['file'];
-        Excel::import(new TranslationsImport, $file);
-
-        Notification::make()
-            ->title(trans('filament-translations::translation.uploaded'))
-            ->success()
-            ->send();
-    }
-
     /**
      * @return void
      */
@@ -66,15 +50,15 @@ class ListTranslations extends ListRecords
         } else {
             $this->saveScan();
         }
-    
+
         $this->notify('success', 'Translation Has Been Loaded');
     }
-    
+
     protected function dispatchScanJob(): void
     {
         dispatch(new ScanJob());
     }
-    
+
     protected function runCustomImportCommand(): void
     {
         spin(
@@ -86,7 +70,7 @@ class ListTranslations extends ListRecords
             'Fetching keys...'
         );
     }
-    
+
     protected function saveScan(): void
     {
         $scan = new SaveScan();

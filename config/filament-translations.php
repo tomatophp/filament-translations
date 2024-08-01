@@ -146,4 +146,31 @@ return [
      |
      */
     'translation_resource' => \TomatoPHP\FilamentTranslations\Resources\TranslationResource::class,
+  
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom Excel export.
+     |
+     */
+    'path_to_custom_excel_export' => null,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom Excel import.
+     |
+     */
+    'path_to_custom_excel_import' => null,
+
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Language Switch Middlewares
+     |
+     */
+    'language_switcher_middlewares' => [
+        'web'
+    ]
 ];

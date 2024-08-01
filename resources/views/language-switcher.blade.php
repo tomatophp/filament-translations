@@ -52,7 +52,7 @@ if(!function_exists('try_svg')) {
                         'cursor-default' => $isCurrent,
                     ])
                     @if (!$isCurrent)
-                        href="{{ route('filament-translations.switcher', ['lang' => $key]) }}"
+                        href="{{ route('filament-translations.switcher', ['lang' => $key, 'model' => get_class(auth()->user()), 'model_id' => \Filament\Facades\Filament::auth()->user()->id]) }}"
                     @endif
                 >
                     <span class="filament-dropdown-list-item-label truncate text-start flex justify-content-start gap-3">
@@ -64,7 +64,7 @@ if(!function_exists('try_svg')) {
                         >
 
                         </div>
-                        <span @class(['font-semibold' => $isCurrent])>{{ str($language['label'])->ucfirst()->value() }}</span>
+                        <span @class(['font-semibold' => $isCurrent])>{{ trans('filament-translations::translation.lang.'.$key) }}</span>
                     </span>
                 </a>
             @endforeach

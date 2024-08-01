@@ -2,6 +2,7 @@
 
 namespace TomatoPHP\FilamentTranslations\Services;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
@@ -56,7 +57,8 @@ class Scan
             'Lang::trans',
             'Lang::transChoice',
             '@lang',
-            '@choice'
+            '@choice',
+            '__'
         ];
 
         $patternA =
@@ -118,7 +120,7 @@ class Scan
         /** @var SplFileInfo $file */
         foreach ($this->disk->allFiles($this->scannedPaths->toArray()) as $file) {
             $dir = dirname($file);
-            if(\Str::startsWith($dir,$excludedPaths)) {
+            if(Str::startsWith($dir,$excludedPaths)) {
                 continue;
             }
 

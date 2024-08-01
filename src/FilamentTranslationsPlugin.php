@@ -11,6 +11,11 @@ use TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware;
 
 class FilamentTranslationsPlugin implements Plugin
 {
+    public bool $allowGPTScan = false;
+    public bool $allowGoogleTranslateScan = false;
+    public bool $allowClearTranslations = false;
+    public bool $allowCreate = false;
+
     public function getId(): string
     {
         return 'filament-translations';
@@ -29,10 +34,30 @@ class FilamentTranslationsPlugin implements Plugin
                 fn (): View => $this->getLanguageSwitcherView()
             );
 
-            $panel->authMiddleware([
-                LanguageMiddleware::class,
-            ]);
-        }
+    }
+
+    public function allowGPTScan(bool $allowGPTScan=true): self
+    {
+        $this->allowGPTScan = $allowGPTScan;
+        return $this;
+    }
+
+    public function allowGoogleTranslateScan(bool $allowGoogleTranslateScan=true): self
+    {
+        $this->allowGoogleTranslateScan = $allowGoogleTranslateScan;
+        return $this;
+    }
+
+    public function allowClearTranslations(bool $allowClearTranslations=true): self
+    {
+        $this->allowClearTranslations = $allowClearTranslations;
+        return $this;
+    }
+
+    public function allowCreate(bool $allowCreate=true): self
+    {
+        $this->allowCreate = $allowCreate;
+        return $this;
     }
 
     public function boot(Panel $panel): void
@@ -43,26 +68,5 @@ class FilamentTranslationsPlugin implements Plugin
     public static function make(): static
     {
         return new static();
-    }
-
-
-    /**
-     * Returns a View object that renders the language switcher component.
-     *
-     * @return \Illuminate\Contracts\View\View The View object that renders the language switcher component.
-     */
-    private function getLanguageSwitcherView(): View
-    {
-        $locales = config('filament-translations.locals');
-        $currentLocale = app()->getLocale();
-        $currentLanguage = collect($locales)->firstWhere('code', $currentLocale);
-        $otherLanguages = $locales;
-        $showFlags = config('filament-translations.show_flags');
-
-        return view('filament-translations::language-switcher', compact(
-            'otherLanguages',
-            'currentLanguage',
-            'showFlags',
-        ));
     }
 }

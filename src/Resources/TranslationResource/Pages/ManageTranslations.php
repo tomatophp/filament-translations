@@ -3,6 +3,14 @@
 namespace TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Select;
+use Illuminate\Support\Str;
+use OpenAI\Laravel\Facades\OpenAI;
+use Stichoza\GoogleTranslate\GoogleTranslate;
+use TomatoPHP\FilamentTranslations\Jobs\ScanWithGoogleTranslate;
+use TomatoPHP\FilamentTranslations\Jobs\ScanWithGPT;
+use TomatoPHP\FilamentTranslations\Models\Translation;
 use function Laravel\Prompts\spin;
 use Maatwebsite\Excel\Facades\Excel;
 use Filament\Notifications\Notification;
@@ -36,58 +44,79 @@ class ManageTranslations extends ManageRecords
                 ->label(trans('filament-translations::translation.scan'));
         }
 
-        if (config('filament-translations.import_enabled')) {
-            $actions[] = Action::make('import')
-                ->label(trans('filament-translations::translation.import'))
+        if(filament('filament-translations')->allowGPTScan && class_exists(OpenAI::class)){
+            $actions[] = Action::make('gpt')
+                ->requiresConfirmation()
+                ->icon('heroicon-o-link')
                 ->form([
-                    FileUpload::make('file')
-                        ->label(trans('filament-translations::translation.import-file'))
-                        ->acceptedFileTypes([
-                            "application/csv",
-                            "application/vnd.ms-excel",
-                            "application/vnd.msexcel",
-                            "text/csv",
-                            "text/anytext",
-                            "text/plain",
-                            "text/x-c",
-                            "text/comma-separated-values",
-                            "inode/x-empty",
-                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        ])
-                        ->storeFiles(false)
+                    Select::make('language')
+                        ->searchable()
+                        ->options(collect(config('filament-translations.locals'))->pluck('label', 'label')->toArray())
+                        ->label(trans('filament-translations::translation.gpt_scan_language'))
+                        ->required()
                 ])
-                ->icon('heroicon-o-document-arrow-up')
-                ->color('success')
-                ->action(function (array $data): void {
-                    $this->import($data);
-                });
+                ->action(function (array $data){
+                    dispatch(new ScanWithGPT($data['language'], auth()->user()->id,get_class(auth()->user())));
+
+                    Notification::make()
+                        ->title(trans('filament-translations::translation.gpt_scan_notification_start'))
+                        ->success()
+                        ->send();
+                })
+                ->color('warning')
+                ->label(trans('filament-translations::translation.gpt_scan'));
         }
 
-        if (config('filament-translations.export_enabled')) {
-            $actions[] = Action::make('export')
-                ->label(trans('filament-translations::translation.export'))
-                ->icon('heroicon-o-document-arrow-down')
+	    if (filament('filament-translations')->allowGoogleTranslateScan && class_exists(GoogleTranslate::class)) {
+		    $actions[] = Action::make('google')
+			    ->requiresConfirmation()
+			    ->icon('heroicon-o-language')
+			    ->form([
+				    Select::make('language')
+					    ->searchable()
+					    ->options(
+						    collect(config('filament-translations.locals'))->mapWithKeys(function ($item, $key) {
+							    return [$key => $item['label']];
+						    })->toArray()
+					    )
+					    ->label(trans('filament-translations::translation.gpt_scan_language'))
+					    ->required()
+			    ])
+			    ->action(function (array $data) {
+				    dispatch(
+					    new ScanWithGoogleTranslate(auth()->user(), $data['language'])
+				    );
+
+				    Notification::make()
+					    ->title(trans('filament-translations::translation.google_scan_notifications_start'))
+					    ->success()
+					    ->send();
+			    })
+			    ->color('warning')
+			    ->label(trans('filament-translations::translation.google_scan'));
+	    }
+
+        if(filament('filament-translations')->allowClearTranslations){
+            $actions[] = Action::make('clear')
+                ->requiresConfirmation()
+                ->icon('heroicon-o-trash')
+                ->action(function (){
+                    Translation::query()->truncate();
+
+                    Notification::make()
+                        ->title(trans('filament-translations::translation.clear_notifications'))
+                        ->success()
+                        ->send();
+                })
                 ->color('danger')
-                ->action('export');
+                ->label(trans('filament-translations::translation.clear'));
+        }
+
+        if(filament('filament-translations')->allowCreate){
+            $actions[] = CreateAction::make();
         }
 
         return $actions;
-    }
-
-    public function export()
-    {
-        return Excel::download(new TranslationsExport(), date('d-m-Y-H-i-s') . '-translations.xlsx');
-    }
-
-    public function import(array $data)
-    {
-        $file = $data['file'];
-        Excel::import(new TranslationsImport, $file);
-
-        Notification::make()
-            ->title(trans('filament-translations::translation.uploaded'))
-            ->success()
-            ->send();
     }
 
     public function scan(): void
@@ -99,15 +128,15 @@ class ManageTranslations extends ManageRecords
         } else {
             $this->saveScan();
         }
-    
+
         $this->sendNotification();
     }
-    
+
     protected function dispatchScanJob(): void
     {
         dispatch(new ScanJob());
     }
-    
+
     protected function runCustomImportCommand(): void
     {
         spin(
@@ -119,13 +148,13 @@ class ManageTranslations extends ManageRecords
             'Fetching keys...'
         );
     }
-    
+
     protected function saveScan(): void
     {
         $scan = new SaveScan();
         $scan->save();
     }
-    
+
     protected function sendNotification(): void
     {
         Notification::make()

@@ -39,7 +39,7 @@ class FilamentTranslationsServiceProvider extends ServiceProvider
 
         //Publish Lang
         $this->publishes([
-           __DIR__.'/../resources/lang' => app_path('lang/vendor/filament-translations'),
+           __DIR__.'/../resources/lang' => base_path('lang/vendor/filament-translations'),
         ], 'filament-translations-lang');
 
         //Register Routes

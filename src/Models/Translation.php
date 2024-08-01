@@ -25,7 +25,8 @@ class Translation extends LanguageLine
     protected $fillable = [
         "group",
         "key",
-        "text"
+        "text",
+        "namespace"
     ];
 
 

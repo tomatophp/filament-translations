@@ -16,12 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/admin/languages/switcher', function (Request $request) {
+Route::get('/languages/switcher', function (Request $request) {
     $request->validate([
         'lang' => 'required|string',
+        'model' => 'required|string',
+        'model_id'=> 'required|integer'
     ]);
 
-    $user = User::find(auth()->user()->id);
+    $user = $request->get('model')::find($request->get('model_id'));
 
     $user->lang = $request->get('lang');
     $user->save();
@@ -38,4 +40,4 @@ Route::get('/admin/languages/switcher', function (Request $request) {
 
     return redirect()->to(config('filament-translations.redirect'));
 
-})->middleware('web')->name('filament-translations.switcher');
+})->middleware(config('filament-translations.language_switcher_middlewares'))->name('filament-translations.switcher');
