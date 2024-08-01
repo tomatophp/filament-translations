@@ -7,7 +7,6 @@ use Filament\Panel;
 use Illuminate\View\View;
 use Kenepa\TranslationManager\Http\Middleware\SetLanguage;
 use TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware;
-use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 
 
 class FilamentTranslationsPlugin implements Plugin
@@ -21,7 +20,7 @@ class FilamentTranslationsPlugin implements Plugin
     {
         $panel
             ->resources([
-                TranslationResource::class
+                config('filament-translations.translation_resource'),
             ]);
 
         if (config('filament-translations.language_switcher')) {

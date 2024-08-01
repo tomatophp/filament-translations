@@ -137,4 +137,13 @@ return [
     'scan_enabled' => true,
     'export_enabled' => true,
     'import_enabled' => true,
+
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Translation resource.
+     |
+     */
+    'translation_resource' => \TomatoPHP\FilamentTranslations\Resources\TranslationResource::class,
 ];
