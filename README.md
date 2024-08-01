@@ -169,7 +169,6 @@ $panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsSwitcherPlugi
 
 You can scan your project to get all the languages tags and save them to the database
 
-
 ```bash
 php artisan filament-translations:import
 ```
@@ -227,6 +226,16 @@ You can show or hide the buttons in the UI by changing the config file. By defau
     'show_export_button' => false,
     'show_scan_button' => false ,
 ```
+
+### Custom Resource
+
+You can create your own resource to show the translations in the UI, add your custom resource class to the config file like this:
+
+```php
+    'translation_resource' => CustomResource::class,
+```
+
+This is especially useful when you want to have complete control over the UI but still want to use the translations package. Think about implementing a check on user roles when using `shouldRegisterNavigation` in your custom resource.
 
 ## Other Filament Packages
 
