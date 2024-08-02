@@ -16,11 +16,10 @@ class ScanWithGPT implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public string $lanuage = "English",
+        public string $language = "English",
         public int $userId,
         public string $userType
-    )
-    {
+    ) {
     }
 
     /**
@@ -32,7 +31,7 @@ class ScanWithGPT implements ShouldQueue
         $getAllTranslations = Translation::all();
         $chunks = array_chunk($getAllTranslations->toArray(), 50);
 
-        foreach ($chunks as $chunk){
+        foreach ($chunks as $chunk) {
             $makeJsonArray = [];
             foreach ($chunk as $translation) {
                 $makeJsonArray[$translation['key']] = $translation['text']['en'] ?? $translation['key'];
@@ -48,7 +47,7 @@ class ScanWithGPT implements ShouldQueue
                     ],
                     [
                         "role" => "user",
-                        "content" =>  "Translate the following json object from English to ".$this->lanuage.", ensuring you return only the translated content without added quotes or any other extraneous details. Importantly, any word prefixed with the symbol ':' should remain unchanged"
+                        "content" =>  "Translate the following json object from English to " . $this->language . ", ensuring you return only the translated content without added quotes or any other extraneous details. Importantly, any word prefixed with the symbol ':' should remain unchanged"
                     ],
                     [
                         "role" => "user",
@@ -66,15 +65,15 @@ class ScanWithGPT implements ShouldQueue
 
             $getLocal = config('filament-translations.locals');
             $local = "en";
-            foreach ($getLocal as $key => $item){
-                if($item['label'] == $data['lanuage']){
+            foreach ($getLocal as $key => $item) {
+                if ($item['label'] == $this->language) {
                     $local = $key;
                 }
             }
 
-            for($i=0; $i<count($chunk); $i++){
+            for ($i = 0; $i < count($chunk); $i++) {
                 $translationModel = Translation::where('key', $chunk[$i]['key'])->first();
-                if($translationModel){
+                if ($translationModel) {
                     $text = $translationModel->text;
                     $text[$local] = $translationArray->{$chunk[$i]['key']} ?? $chunk[$i]['key'];
 
@@ -89,5 +88,4 @@ class ScanWithGPT implements ShouldQueue
                 ->sendToDatabase($user);
         }
     }
-
 }
