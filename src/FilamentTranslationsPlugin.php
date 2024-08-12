@@ -27,14 +27,6 @@ class FilamentTranslationsPlugin implements Plugin
             ->resources([
                 config('filament-translations.translation_resource'),
             ]);
-
-        if (config('filament-translations.language_switcher')) {
-            $panel->renderHook(
-                config('filament-translations.language_switcher_render_hook'),
-                fn (): View => $this->getLanguageSwitcherView()
-            );
-
-        }
     }
 
     public function allowGPTScan(bool $allowGPTScan=true): self
