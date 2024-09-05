@@ -59,7 +59,7 @@ class SaveScan
      * @param $group
      * @param $key
      */
-    protected function createOrUpdate($namespace, $group, $key, $mainKey=null): void
+    protected function createOrUpdate($namespace, $group, $key, $mainKey = null): void
     {
         /** @var Translation $translation */
         $translation = Translation::withTrashed()
@@ -78,7 +78,7 @@ class SaveScan
             $locals = config('filament-translations.locals');
             $text = [];
             foreach ($locals as $locale => $lang) {
-                $text[$locale] = Lang::get($mainKey,[],$locale);
+                $text[$locale] = $locale === 'en' ? Lang::get($mainKey, [], $locale) : '';
             }
             $translation = Translation::make([
                 'namespace' => $namespace,
