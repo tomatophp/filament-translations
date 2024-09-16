@@ -28,7 +28,6 @@
 # Filament translations
 
 [![Latest Stable Version](https://poser.pugx.org/tomatophp/filament-translations/version.svg)](https://packagist.org/packages/tomatophp/filament-translations)
-[![PHP Version Require](http://poser.pugx.org/tomatophp/filament-translations/require/php)](https://packagist.org/packages/tomatophp/filament-translations)
 [![License](https://poser.pugx.org/tomatophp/filament-translations/license.svg)](https://packagist.org/packages/tomatophp/filament-translations)
 [![Downloads](https://poser.pugx.org/tomatophp/filament-translations/d/total.svg)](https://packagist.org/packages/tomatophp/filament-translations)
 
@@ -239,43 +238,4 @@ This is especially useful when you want to have complete control over the UI but
 
 ## Other Filament Packages
 
-- [Filament Users Resource](https://www.github.com/tomatophp/filament-users)
-- [Filament Settings Hub](https://www.github.com/tomatophp/filament-settings-hub)
-- [Filament Menus Generator](https://www.github.com/tomatophp/filament-menus)
-- [Filament Alerts Sender](https://www.github.com/tomatophp/filament-alerts)
-- [Filament Accounts Builder](https://www.github.com/tomatophp/filament-accounts)
-- [Filament Wallet Manager](https://www.github.com/tomatophp/filament-wallet)
-- [Filament Artisan Runner](https://www.github.com/tomatophp/filament-artisan)
-- [Filament File Browser](https://www.github.com/tomatophp/filament-browser)
-- [Filament Developer Gate](https://www.github.com/tomatophp/filament-developer-gate)
-- [Filament Locations Seeder](https://www.github.com/tomatophp/filament-locations)
-- [Filament Plugins Manager](https://www.github.com/tomatophp/filament-plugins)
-- [Filament Splade Integration](https://www.github.com/tomatophp/filament-splade)
-- [Filament Types Manager](https://www.github.com/tomatophp/filament-types)
-- [Filament Icons Picker](https://www.github.com/tomatophp/filament-icons)
-- [Filament Helpers Classes](https://www.github.com/tomatophp/filament-helpers)
-
-
-## Support
-
-you can join our discord server to get support [TomatoPHP](https://discord.gg/VZc8nBJ3ZU)
-
-## Docs
-
-you can check docs of this package on [Docs](https://docs.tomatophp.com/filament/filament-translations)
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Security
-
-Please see [SECURITY](SECURITY.md) for more information about security.
-
-## Credits
-
-- [Tomatophp](mailto:info@3x1.io)
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+Checkout our [Awesome TomatoPHP](https://github.com/tomatophp/awesome)
