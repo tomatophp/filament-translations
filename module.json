@@ -1,0 +1,29 @@
+{
+    "name": "FilamentTranslations",
+    "alias": "filament-translations",
+    "description": {
+        "ar": "قم بترجمة وإدارة النظام الخاص بك بسهولة",
+        "en": "Manage your translation with DB and cache",
+        "gr": "Manage your translation with DB and cache",
+        "sp": "Manage your translation with DB and cache"
+    },
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "TomatoPHP\\FilamentTranslations\\FilamentTranslationsServiceProvider"
+    ],
+    "files": [],
+    "title": {
+        "ar": "مدير الترجمات",
+        "en": "Translations Manager",
+        "gr": "Translations Manager",
+        "sp": "Translations Manager"
+    },
+    "color": "#cc1448",
+    "icon": "heroicon-c-shopping-bag",
+    "placeholder": "https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg",
+    "type": "plugin",
+    "version": "v1.0.26",
+    "github" : "https://github.com/tomatophp/filament-translations",
+    "docs" : "https://github.com/tomatophp/filament-translations"
+}

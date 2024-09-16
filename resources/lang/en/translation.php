@@ -9,7 +9,7 @@ return [
     ],
     "label" => "Translations",
     "single" => "Translation",
-    "group" => "Translations",
+    "group" => "Settings",
     "gpt_scan_language" => "Language",
     "gpt_scan" => "Use GPT",
     "gpt_scan_notification_start" => "GPT Scan has been started",

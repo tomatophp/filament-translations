@@ -9,7 +9,7 @@ return [
     ],
     "label" => "Übersetzungen",
     "single" => "Übersetzung",
-    "group" => "Übersetzungen",
+    "group" => "Einstellungen",
     "gpt_scan" => "GPT verwenden",
     "gpt_scan_notifications_done" => "GPT-Scan wurde abgeschlossen",
     "gpt_scan_language" => "Sprache",

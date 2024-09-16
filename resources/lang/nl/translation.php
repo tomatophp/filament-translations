@@ -9,7 +9,7 @@ return [
 	],
 	"label" => "Vertalingen",
 	"single" => "Vertaling",
-	"group" => "Vertalingen",
+	"group" => "Instellingen",
 	"language" => "Taal",
 	"gpt_scan" => "Gebruik GPT",
 	"gpt_scan_notification_start" => "GPT-scan is gestart",
