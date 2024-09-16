@@ -6,6 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Illuminate\View\View;
 use Kenepa\TranslationManager\Http\Middleware\SetLanguage;
+use Nwidart\Modules\Module;
 use TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware;
 
 
@@ -16,6 +17,8 @@ class FilamentTranslationsPlugin implements Plugin
     public bool $allowClearTranslations = false;
     public bool $allowCreate = false;
 
+    private bool $isActive = false;
+
     public function getId(): string
     {
         return 'filament-translations';
@@ -23,10 +26,21 @@ class FilamentTranslationsPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel
-            ->resources([
-                config('filament-translations.translation_resource'),
-            ]);
+        if(class_exists(Module::class)){
+            if(\Nwidart\Modules\Facades\Module::find('FilamentTranslations')->isEnabled()){
+                $this->isActive = true;
+            }
+        }
+        else {
+            $this->isActive = true;
+        }
+
+        if($this->isActive) {
+            $panel
+                ->resources([
+                    config('filament-translations.translation_resource'),
+                ]);
+        }
     }
 
     public function allowGPTScan(bool $allowGPTScan=true): self

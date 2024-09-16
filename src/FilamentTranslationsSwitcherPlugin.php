@@ -6,12 +6,16 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Illuminate\View\View;
 use Kenepa\TranslationManager\Http\Middleware\SetLanguage;
+use Nwidart\Modules\Module;
 use TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware;
 use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 
 
 class FilamentTranslationsSwitcherPlugin implements Plugin
 {
+
+    private bool $isActive = false;
+
     public function getId(): string
     {
         return 'filament-translations-switcher';
@@ -19,14 +23,26 @@ class FilamentTranslationsSwitcherPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->renderHook(
-            config('filament-translations.language_switcher_render_hook'),
-            fn (): View => $this->getLanguageSwitcherView()
-        );
+        if(class_exists(Module::class)){
+            if(\Nwidart\Modules\Facades\Module::find('FilamentTranslations')->isEnabled()){
+                $this->isActive = true;
+            }
+        }
+        else {
+            $this->isActive = true;
+        }
 
-        $panel->authMiddleware([
-            LanguageMiddleware::class,
-        ]);
+        if($this->isActive) {
+
+            $panel->renderHook(
+                config('filament-translations.language_switcher_render_hook'),
+                fn(): View => $this->getLanguageSwitcherView()
+            );
+
+            $panel->authMiddleware([
+                LanguageMiddleware::class,
+            ]);
+        }
     }
 
     public function boot(Panel $panel): void
