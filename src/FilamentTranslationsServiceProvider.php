@@ -2,6 +2,7 @@
 
 namespace TomatoPHP\FilamentTranslations;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Filament\Facades\Filament;
 use TomatoPHP\FilamentTranslations\Console\ImportCommand;
@@ -54,6 +55,6 @@ class FilamentTranslationsServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //you boot methods here
+       Config::set('filament-translation-component.languages', Config::get('filament-translations.locals'));
     }
 }
