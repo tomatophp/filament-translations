@@ -23,7 +23,7 @@
     "icon": "heroicon-c-shopping-bag",
     "placeholder": "https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg",
     "type": "plugin",
-    "version": "v1.0.26",
+    "version": "v1.0.27",
     "github" : "https://github.com/tomatophp/filament-translations",
     "docs" : "https://github.com/tomatophp/filament-translations"
 }
