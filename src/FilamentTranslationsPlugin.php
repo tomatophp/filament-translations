@@ -27,7 +27,7 @@ class FilamentTranslationsPlugin implements Plugin
     public function register(Panel $panel): void
     {
         if(class_exists(Module::class)){
-            if(\Nwidart\Modules\Facades\Module::find('FilamentTranslations')->isEnabled()){
+            if(\Nwidart\Modules\Facades\Module::find('FilamentTranslations')?->isEnabled()){
                 $this->isActive = true;
             }
         }
