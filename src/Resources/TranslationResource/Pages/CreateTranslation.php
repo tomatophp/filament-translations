@@ -7,7 +7,12 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateTranslation extends CreateRecord
 {
-    protected static string $resource = TranslationResource::class;
+    protected static string $resource;
+
+    public static function setResourceClass(string $resourceClass): void
+    {
+        static::$resource = $resourceClass;
+    }
 
     public function getTitle(): string
     {
