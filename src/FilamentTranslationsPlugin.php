@@ -8,6 +8,10 @@ use Illuminate\View\View;
 use Kenepa\TranslationManager\Http\Middleware\SetLanguage;
 use Nwidart\Modules\Module;
 use TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware;
+use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages\CreateTranslation;
+use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages\EditTranslation;
+use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages\ListTranslations;
+use TomatoPHP\FilamentTranslations\Resources\TranslationResource\Pages\ManageTranslations;
 
 
 class FilamentTranslationsPlugin implements Plugin
@@ -26,18 +30,21 @@ class FilamentTranslationsPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        if(class_exists(Module::class) && \Nwidart\Modules\Facades\Module::find('FilamentTranslations')?->isEnabled()){
+        if (class_exists(Module::class) && \Nwidart\Modules\Facades\Module::find('FilamentTranslations')?->isEnabled()) {
             $this->isActive = true;
-        }
-        else {
+        } else {
             $this->isActive = true;
         }
 
+        $resourceClass = config('filament-translations.translation_resource');
+
+        CreateTranslation::setResourceClass($resourceClass);
+        EditTranslation::setResourceClass($resourceClass);
+        ListTranslations::setResourceClass($resourceClass);
+        ManageTranslations::setResourceClass($resourceClass);
+
         if($this->isActive) {
-            $panel
-                ->resources([
-                    config('filament-translations.translation_resource'),
-                ]);
+            $panel->resources([$resourceClass]);
         }
     }
 

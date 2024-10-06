@@ -26,8 +26,13 @@ use TomatoPHP\FilamentTranslations\Resources\TranslationResource;
 
 class ManageTranslations extends ManageRecords
 {
-    protected static string $resource = TranslationResource::class;
+    protected static string $resource;
 
+    public static function setResourceClass(string $resourceClass): void
+    {
+        static::$resource = $resourceClass;
+    }
+    
     public function getTitle(): string
     {
         return trans('filament-translations::translation.title.home');
