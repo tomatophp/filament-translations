@@ -2,7 +2,6 @@
 
 namespace TomatoPHP\FilamentTranslations\Tests;
 
-use Illuminate\Support\Facades\Config;
 use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource;
 use TomatoPHP\FilamentTranslations\Tests\Models\Translation;
 use TomatoPHP\FilamentTranslations\Tests\Models\User;
