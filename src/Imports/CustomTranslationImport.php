@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Validators\Failure;
 use Spatie\TranslationLoader\LanguageLine;
 
-class CustomTranslationImport implements ToCollection, WithHeadingRow, SkipsOnFailure
+class CustomTranslationImport implements SkipsOnFailure, ToCollection, WithHeadingRow
 {
     public function collection(Collection $collection): void
     {
@@ -28,7 +28,7 @@ class CustomTranslationImport implements ToCollection, WithHeadingRow, SkipsOnFa
     }
 
     /**
-     * @param Failure[] $failures
+     * @param  Failure[]  $failures
      */
     public function onFailure(Failure ...$failures)
     {

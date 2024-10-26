@@ -3,9 +3,8 @@
 namespace TomatoPHP\FilamentTranslations\Console;
 
 use Illuminate\Console\Command;
-use TomatoPHP\FilamentTranslations\Services\Manager;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
-use function Laravel\Prompts\progress;
+
 use function Laravel\Prompts\spin;
 
 class ImportCommand extends Command
@@ -24,29 +23,29 @@ class ImportCommand extends Command
      */
     protected $description = 'Import translations from the language files';
 
-
     /**
      * Execute the console command.
      */
     public function handle()
     {
         if (config('filament-translations.path_to_custom_import_command')) {
-            $response = spin(
-                function (){
+            spin(
+                function () {
                     $command = config('filament-translations.path_to_custom_import_command');
-                    $command = new $command();
+                    $command = new $command;
                     $command->handle();
                 },
                 'Fetching keys...'
             );
 
             $this->info('Done importing');
+
             return;
         }
 
-        $response = spin(
-            function (){
-                $scan = new SaveScan();
+        spin(
+            function () {
+                $scan = new SaveScan;
                 $scan->save();
             },
             'Fetching keys...'
@@ -54,5 +53,4 @@ class ImportCommand extends Command
 
         $this->info('Done importing');
     }
-
 }

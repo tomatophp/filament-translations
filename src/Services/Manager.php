@@ -53,19 +53,19 @@ class Manager
                 if (in_array($group, config('filament-translations.exclude_groups'))) {
                     continue;
                 }
-                $subLangPath = str_replace($langPath.DIRECTORY_SEPARATOR, '', $info['dirname']);
+                $subLangPath = str_replace($langPath . DIRECTORY_SEPARATOR, '', $info['dirname']);
                 $subLangPath = str_replace(DIRECTORY_SEPARATOR, '/', $subLangPath);
                 $langPath = str_replace(DIRECTORY_SEPARATOR, '/', $langPath);
 
                 if ($subLangPath != $langPath) {
-                    $group = $subLangPath.'/'.$group;
+                    $group = $subLangPath . '/' . $group;
                 }
 
                 if (! $vendor) {
                     $translations = \Lang::getLoader()->load($locale, $group);
                 } else {
                     $translations = include $file;
-                    $group = 'vendor/'.$vendorName.'/'.$group;
+                    $group = 'vendor/' . $vendorName . '/' . $group;
                 }
 
                 if ($translations && is_array($translations)) {
@@ -89,13 +89,13 @@ class Manager
         }
         $value = (string) $value;
         $translation = Translation::firstOrNew([
-            'group'  => $group,
-            'key'    => $key,
+            'group' => $group,
+            'key' => $key,
         ]);
 
         $text = $translation->text;
 
-        if(empty($text[$locale])) {
+        if (empty($text[$locale])) {
             $text[$locale] = $value;
             $replace = true;
         }

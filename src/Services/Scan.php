@@ -2,9 +2,8 @@
 
 namespace TomatoPHP\FilamentTranslations\Services;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Scan
@@ -25,8 +24,6 @@ class Scan
 
     /**
      * Manager constructor.
-     *
-     * @param Filesystem $disk
      */
     public function __construct(Filesystem $disk)
     {
@@ -34,9 +31,6 @@ class Scan
         $this->scannedPaths = collect([]);
     }
 
-    /**
-     * @param $path
-     */
     public function addScannedPath($path): void
     {
         $this->scannedPaths->push($path);
@@ -58,7 +52,7 @@ class Scan
             'Lang::transChoice',
             '@lang',
             '@choice',
-            '__'
+            '__',
         ];
 
         $patternA =
@@ -74,8 +68,7 @@ class Scan
             "([.][^\1)$]+)+" . // Be followed by one or more items/keys
             ')' . // Close group
             "[\'\"]" . // Closing quote
-            "[\),]"  // Close parentheses or new parameter
-        ;
+            "[\),]";  // Close parentheses or new parameter
 
         $patternB =
             // See https://regex101.com/r/2EfItR/2
@@ -91,8 +84,7 @@ class Scan
             ')' . // Close group
             '[\"]' . // Closing quote
 
-            '[\)]'  // Close parentheses or new parameter
-        ;
+            '[\)]';  // Close parentheses or new parameter
 
         $patternC =
             // See https://regex101.com/r/VaPQ7A/2
@@ -108,8 +100,7 @@ class Scan
             ')' . // Close group
             '[\']' . // Closing quote
 
-            '[\)]'  // Close parentheses or new parameter
-        ;
+            '[\)]';  // Close parentheses or new parameter
 
         $trans = collect();
         $__ = collect();
@@ -120,7 +111,7 @@ class Scan
         /** @var SplFileInfo $file */
         foreach ($this->disk->allFiles($this->scannedPaths->toArray()) as $file) {
             $dir = dirname($file);
-            if(Str::startsWith($dir,$excludedPaths)) {
+            if (Str::startsWith($dir, $excludedPaths)) {
                 continue;
             }
 
@@ -136,6 +127,7 @@ class Scan
                 $__->push($matches[2]);
             }
         }
+
         return [$trans->flatten()->unique(), $__->flatten()->unique()];
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateLanguageLinesTable extends Migration
 {
@@ -25,12 +25,6 @@ class CreateLanguageLinesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-
-        if (!Schema::hasColumn('users', 'lang')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->string('lang')->default('en');
-            });
-        }
     }
 
     /**
@@ -41,11 +35,5 @@ class CreateLanguageLinesTable extends Migration
     public function down()
     {
         Schema::drop('language_lines');
-
-        if (Schema::hasColumn('users', 'lang')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->dropColumn('lang');
-            });
-        }
     }
 }
