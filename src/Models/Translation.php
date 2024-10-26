@@ -2,10 +2,9 @@
 
 namespace TomatoPHP\FilamentTranslations\Models;
 
-use Illuminate\Support\Facades\Cache;
-use Spatie\TranslationLoader\LanguageLine;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\TranslationLoader\LanguageLine;
 
 class Translation extends LanguageLine
 {
@@ -20,28 +19,28 @@ class Translation extends LanguageLine
     /** @var array */
     protected $casts = ['text' => 'array'];
 
-    protected $table = "language_lines";
+    protected $table = 'language_lines';
 
     protected $fillable = [
-        "group",
-        "key",
-        "text",
-        "namespace"
+        'group',
+        'key',
+        'text',
+        'namespace',
     ];
-
 
     public static function getTranslatableLocales(): array
     {
         return config('filament-translations.locals');
     }
 
-    public function getTranslation(string $locale, string $group = null): string
+    public function getTranslation(string $locale, ?string $group = null): string
     {
-        if ($group === '*' && !isset($this->text[$locale])) {
+        if ($group === '*' && ! isset($this->text[$locale])) {
             $fallback = config('app.fallback_locale');
 
             return $this->text[$fallback] ?? $this->key;
         }
+
         return $this->text[$locale] ?? '';
     }
 

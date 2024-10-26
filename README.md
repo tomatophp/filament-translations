@@ -1,31 +1,6 @@
 ![Screenshot of Login](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg)
 
-## Documentation
-
-1. [Filament translations](#filament-translations)
-2. [Screenshots](#screenshots)
-3. [Installation](#installation)
-    - [Allow ChatGPT Auto Translations](#allow-chatgpt-auto-translations)
-    - [Allow Google Translate Auto Translations](#allow-google-translate-auto-translations)
-    - [Allow Create Button to Create New Language](#allow-create-button-to-create-new-language)
-    - [Allow Clear All Translations Button](#allow-clear-all-translations-button)
-    - [Publish Resource](#publish-resource)
-    - [Publish Assets](#publish-assets)
-4. [Use Language Switcher](#use-language-switcher)
-5. [Usage](#usage)
-    - [Scan Using Command Line](#scan-using-command-line)
-    - [Change Scan to work on Queue](#change-scan-to-work-on-queue)
-    - [Custom Import Command](#custom-import-command)
-    - [Show or hide buttons in the UI](#show-or-hide-buttons-in-the-ui)
-6. [Other Filament Packages](#other-filament-packages)
-7. [Support](#support)
-8. [Docs](#docs)
-9. [Changelog](#changelog)
-10. [Security](#security)
-11. [Credits](#credits)
-12. [License](#license)
-
-# Filament translations
+# Filament Translations Manager
 
 [![Latest Stable Version](https://poser.pugx.org/tomatophp/filament-translations/version.svg)](https://packagist.org/packages/tomatophp/filament-translations)
 [![License](https://poser.pugx.org/tomatophp/filament-translations/license.svg)](https://packagist.org/packages/tomatophp/filament-translations)
@@ -47,47 +22,16 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 composer require tomatophp/filament-translations
 ```
 
-Finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
+now run install command
+
+```bash
+php artisan filament-translations:install
+```
+
+Finally register the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 
 ```php
 $panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
-```
-
-
-### Allow ChatGPT Auto Translations
-
-If you want to use ChatGPT to auto-translate your languages, you need to install `OpenAI` package by running:
-
-```bash
-composer require openai-php/laravel
-```
-
-now you need to add the following to your `.env` file:
-
-```bash
-OPENAI_API_KEY=
-OPENAI_ORGANIZATION=
-```
-
-allow the feature on your panel provider by adding the following:
-
-```php
-$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make()->allowGPTScan())
-```
-
-
-### Allow Google Translate Auto Translations
-
-If you want to use Google Translate for auto-translating your languages, you need to install the `stichoza/google-translate` package by running:
-
-```bash
-composer require stichoza/google-translate-php
-```
-
-Enable the feature on your admin panel provider file by adding the following:
-
-```php
-$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make()->allowGoogleTranslateScan())
 ```
 
 ### Allow Create Button to Create New Language
@@ -154,13 +98,7 @@ php artisan vendor:publish --tag="filament-translations-migrations"
 
 ## Use Language Switcher
 
-You can use the language switcher in your panel by using the following plugin:
-
-```php
-$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsSwitcherPlugin::make())
-```
-
-**NOTE** your auth user table must have `lang` filed on the table to make this switch working fine.
+we move language switcher to another package you can check it [Filament Language Switcher](https://github.com/tomatophp/filament-language-switcher)
 
 ## Usage
 

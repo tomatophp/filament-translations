@@ -5,10 +5,10 @@ namespace TomatoPHP\FilamentTranslations\Exports;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Spatie\TranslationLoader\LanguageLine;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Spatie\TranslationLoader\LanguageLine;
 
-class CustomTranslationExport implements FromCollection, WithMapping, WithHeadings
+class CustomTranslationExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection(): Collection
     {
@@ -24,7 +24,7 @@ class CustomTranslationExport implements FromCollection, WithMapping, WithHeadin
         ];
 
         $locales = config('filament-translations.locals');
-        foreach ($locales as $key=>$value){
+        foreach ($locales as $key => $value) {
             $exportArray[] = $row->text[$key] ?? null;
         }
 
@@ -34,13 +34,13 @@ class CustomTranslationExport implements FromCollection, WithMapping, WithHeadin
     public function headings(): array
     {
         $headers = [
-            "id",
-            "group",
-            "key",
+            'id',
+            'group',
+            'key',
         ];
 
         $locales = config('filament-translations.locals');
-        foreach ($locales as $key => $value){
+        foreach ($locales as $key => $value) {
             $headers[] = $key;
         }
 

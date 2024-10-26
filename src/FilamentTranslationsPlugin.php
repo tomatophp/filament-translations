@@ -3,21 +3,23 @@
 namespace TomatoPHP\FilamentTranslations;
 
 use Filament\Contracts\Plugin;
+use Filament\Pages\Page;
 use Filament\Panel;
-use Illuminate\View\View;
-use Kenepa\TranslationManager\Http\Middleware\SetLanguage;
-use Nwidart\Modules\Module;
-use TomatoPHP\FilamentTranslations\Http\Middleware\LanguageMiddleware;
-
+use Filament\Tables\Actions\ReplicateAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\Components\ClearAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\Components\CreateAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\Components\ScanAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\ManagePageActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\HeaderActions\ExportAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\HeaderActions\ImportAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationHeaderActions;
 
 class FilamentTranslationsPlugin implements Plugin
 {
-    public bool $allowGPTScan = false;
-    public bool $allowGoogleTranslateScan = false;
     public bool $allowClearTranslations = false;
-    public bool $allowCreate = false;
 
-    private bool $isActive = false;
+    public bool $allowCreate = false;
 
     public function getId(): string
     {
@@ -26,52 +28,50 @@ class FilamentTranslationsPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        if(class_exists(Module::class) && \Nwidart\Modules\Facades\Module::find('FilamentTranslations')?->isEnabled()){
-            $this->isActive = true;
-        }
-        else {
-            $this->isActive = true;
-        }
-
-        if($this->isActive) {
-            $panel
-                ->resources([
-                    config('filament-translations.translation_resource'),
-                ]);
-        }
+        $panel->resources([
+            config('filament-translations.translation_resource'),
+        ]);
     }
 
-    public function allowGPTScan(bool $allowGPTScan=true): self
-    {
-        $this->allowGPTScan = $allowGPTScan;
-        return $this;
-    }
-
-    public function allowGoogleTranslateScan(bool $allowGoogleTranslateScan=true): self
-    {
-        $this->allowGoogleTranslateScan = $allowGoogleTranslateScan;
-        return $this;
-    }
-
-    public function allowClearTranslations(bool $allowClearTranslations=true): self
+    public function allowClearTranslations(bool $allowClearTranslations = true): self
     {
         $this->allowClearTranslations = $allowClearTranslations;
+
         return $this;
     }
 
-    public function allowCreate(bool $allowCreate=true): self
+    public function allowCreate(bool $allowCreate = true): self
     {
         $this->allowCreate = $allowCreate;
+
         return $this;
     }
 
     public function boot(Panel $panel): void
     {
-        //
+        if (config('filament-translations.import_enabled')) {
+            TranslationHeaderActions::register(ImportAction::make());
+        }
+
+        if (config('filament-translations.export_enabled')) {
+            TranslationHeaderActions::register(ExportAction::make());
+        }
+
+        if(config('filament-translations.scan_enabled')){
+            ManagePageActions::register(ScanAction::make());
+        }
+
+        if(filament('filament-translations')->allowClearTranslations){
+            ManagePageActions::register(ClearAction::make());
+        }
+
+        if(filament('filament-translations')->allowCreate){
+            ManagePageActions::register(CreateAction::make());
+        }
     }
 
-    public static function make(): static
+    public static function make(): FilamentTranslationsPlugin
     {
-        return new static();
+        return new FilamentTranslationsPlugin;
     }
 }

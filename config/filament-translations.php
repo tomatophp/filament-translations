@@ -9,22 +9,11 @@ return [
     | add path that will be show to the scaner to catch lanuages tags
     |
     */
-    "paths" => [
+    'paths' => [
         app_path(),
         resource_path('views'),
-        base_path('vendor')
+        base_path('vendor'),
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Redirect
-    |--------------------------------------------------------------------------
-    |
-    | set the redirect path when change the language between selected path or next request
-    |
-    */
-    "redirect" => "next",
-
 
     /*
     |--------------------------------------------------------------------------
@@ -35,8 +24,7 @@ return [
     |
     */
 
-    "excludedPaths" => [],
-
+    'excludedPaths' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -46,25 +34,24 @@ return [
     | add the locals that will be show on the languages selector
     |
     */
-    "locals" => [
-        "en" => [
-            "label" => "English",
-            "flag" => "us"
+    'locals' => [
+        'en' => [
+            'label' => 'English',
+            'flag' => 'us',
         ],
-        "ar" => [
-            "label" => "Arabic",
-            "flag" => "eg"
+        'ar' => [
+            'label' => 'Arabic',
+            'flag' => 'eg',
         ],
-        "pt_BR" => [
-            "label" => "Português (Brasil)",
-            "flag" => "br"
+        'pt_BR' => [
+            'label' => 'Português (Brasil)',
+            'flag' => 'br',
         ],
-        "my" => [
-            "label" => "Burmese",
-            "flag" => "mm"
+        'my' => [
+            'label' => 'Burmese',
+            'flag' => 'mm',
         ],
     ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -74,27 +61,7 @@ return [
     | use simple modal resource for the translation resource
     |
     */
-    "modal" => true,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Language Switcher
-    |--------------------------------------------------------------------------
-    |
-    | Enable the language switcher feature in the Filament top bar.
-    |
-    */
-    'language_switcher' => true,
-
-    /*
-    |--------------------------------------------------------------------------
-    |
-    | Determines the render hook for the language switcher.
-    | Available render hooks: https://filamentphp.com/docs/3.x/support/render-hooks#available-render-hooks
-    |
-    */
-
-    'language_switcher_render_hook' => 'panels::user-menu.before',
+    'modal' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -138,15 +105,14 @@ return [
     'export_enabled' => true,
     'import_enabled' => true,
 
-
     /*
      |--------------------------------------------------------------------------
      |
      | Translation resource.
      |
      */
-    'translation_resource' => \TomatoPHP\FilamentTranslations\Resources\TranslationResource::class,
-  
+    'translation_resource' => \TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource::class,
+
     /*
      |--------------------------------------------------------------------------
      |
@@ -162,15 +128,4 @@ return [
      |
      */
     'path_to_custom_excel_import' => null,
-
-
-    /*
-     |--------------------------------------------------------------------------
-     |
-     | Language Switch Middlewares
-     |
-     */
-    'language_switcher_middlewares' => [
-        'web'
-    ]
 ];

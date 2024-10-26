@@ -4,14 +4,14 @@ namespace TomatoPHP\FilamentTranslations\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Spatie\TranslationLoader\LanguageLine;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Spatie\TranslationLoader\LanguageLine;
 
-class TranslationsExport implements FromCollection, WithMapping, WithHeadings
+class TranslationsExport implements FromCollection, WithHeadings, WithMapping
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         return LanguageLine::all();
@@ -25,7 +25,7 @@ class TranslationsExport implements FromCollection, WithMapping, WithHeadings
         ];
 
         $locales = config('filament-translations.locals');
-        foreach ($locales as $key=>$value){
+        foreach ($locales as $key => $value) {
             $exportArray[] = $line->text[$key] ?? null;
         }
 
@@ -35,13 +35,13 @@ class TranslationsExport implements FromCollection, WithMapping, WithHeadings
     public function headings(): array
     {
         $headers = [
-            "id",
-            "key",
+            'id',
+            'key',
         ];
 
         $locales = config('filament-translations.locals');
-        foreach ($locales as $key=>$value){
-            $headers[] = $value["label"];
+        foreach ($locales as $key => $value) {
+            $headers[] = $value['label'];
         }
 
         return $headers;

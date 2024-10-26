@@ -18,15 +18,15 @@ class ExcelImportExportService
 
         $fileName = date('Y-m-d-H-i-s') . '-translations.xlsx';
 
-        return Excel::download(new $exportClass(), $fileName);
+        return Excel::download(new $exportClass, $fileName);
     }
 
-    public static function import(UploadedFile|string $file): void
+    public static function import(UploadedFile | string $file): void
     {
         $importClass = config('filament-translations.path_to_custom_excel_import')
             ?? TranslationsImport::class;
 
-        Excel::import(new $importClass(), $file);
+        Excel::import(new $importClass, $file);
 
         self::sendSuccessNotification();
     }
