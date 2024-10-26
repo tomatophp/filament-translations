@@ -20,7 +20,7 @@ class SaveScan
     public function save()
     {
         $scanner = app(Scan::class);
-        collect($this->paths)->filter(function($path) {
+        collect($this->paths)->filter(function ($path) {
             return File::exists($path);
         })->each(function ($path) use ($scanner) {
             $scanner->addScannedPath($path);
