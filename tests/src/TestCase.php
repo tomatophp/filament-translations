@@ -55,6 +55,10 @@ abstract class TestCase extends BaseTestCase
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite.database', __DIR__ . '/../database/database.sqlite');
 
+        $app['config']->set('filament-translations.paths', [
+            __DIR__ . '/../..',
+        ]);
+
         $app['config']->set('view.paths', [
             ...$app['config']->get('view.paths'),
             __DIR__ . '/../resources/views',
