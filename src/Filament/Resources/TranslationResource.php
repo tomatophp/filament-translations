@@ -2,7 +2,6 @@
 
 namespace TomatoPHP\FilamentTranslations\Filament\Resources;
 
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;

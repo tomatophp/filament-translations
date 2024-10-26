@@ -4,9 +4,9 @@ namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\
 
 use Filament\Actions;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Model;
 use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
+
 use function Laravel\Prompts\spin;
 
 class ScanAction extends Action
@@ -16,7 +16,9 @@ class ScanAction extends Action
         return Actions\Action::make('scan')
             ->requiresConfirmation()
             ->icon('heroicon-m-magnifying-glass')
-            ->action(function (){
+            ->hiddenLabel()
+            ->tooltip(trans('filament-translations::translation.scan'))
+            ->action(function () {
                 if (config('filament-translations.use_queue_on_scan')) {
                     dispatch(new ScanJob);
                 } elseif (config('filament-translations.path_to_custom_import_command')) {

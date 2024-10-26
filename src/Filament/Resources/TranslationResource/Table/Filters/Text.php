@@ -4,7 +4,6 @@ namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\
 
 use Filament\Tables\Filters;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\TranslationLoader\LanguageLine;
 
 class Text extends Filter
 {

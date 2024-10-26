@@ -3,7 +3,6 @@
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\Components;
 
 use Filament\Actions;
-use Illuminate\Database\Eloquent\Model;
 
 class DeleteAction extends Action
 {

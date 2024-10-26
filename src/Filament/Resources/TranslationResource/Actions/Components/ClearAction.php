@@ -4,7 +4,6 @@ namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\
 
 use Filament\Actions;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Model;
 use TomatoPHP\FilamentTranslations\Models\Translation;
 
 class ClearAction extends Action
@@ -14,6 +13,8 @@ class ClearAction extends Action
         return Actions\Action::make('clear')
             ->requiresConfirmation()
             ->icon('heroicon-o-trash')
+            ->hiddenLabel()
+            ->tooltip(trans('filament-translations::translation.clear'))
             ->action(function () {
                 Translation::query()->truncate();
 

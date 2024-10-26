@@ -2,7 +2,7 @@
 
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions;
 
-class ViewPageActions
+final class ViewPageActions
 {
     use Contracts\CanRegister;
 
@@ -10,7 +10,7 @@ class ViewPageActions
     {
         return [
             Components\EditAction::make(),
-            Components\DeleteAction::make()
+            Components\DeleteAction::make(),
         ];
     }
 }

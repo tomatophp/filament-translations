@@ -5,6 +5,7 @@ namespace TomatoPHP\FilamentTranslations\Tests;
 use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource;
 use TomatoPHP\FilamentTranslations\Tests\Models\Translation;
 use TomatoPHP\FilamentTranslations\Tests\Models\User;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
@@ -129,9 +130,6 @@ it('can perform clear translation clear', function () {
     }
 });
 
-
-
-
 it('can create new translation', function () {
     $newData = Translation::factory()->make();
 
@@ -160,7 +158,7 @@ it('can validate translation input', function () {
         ->call('create')
         ->assertHasFormErrors([
             'group' => 'required',
-            'key' => 'required'
+            'key' => 'required',
         ]);
 });
 
@@ -204,7 +202,7 @@ it('can validate edit translation input', function () {
         ->call('save')
         ->assertHasFormErrors([
             'group' => 'required',
-            'key' => 'required'
+            'key' => 'required',
         ]);
 });
 

@@ -2,8 +2,6 @@
 
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Form\Components;
 
-use Filament\Forms;
-
 class Text extends Component
 {
     public static function make(): \TomatoPHP\FilamentTranslationComponent\Components\Translation

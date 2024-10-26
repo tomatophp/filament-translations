@@ -3,7 +3,6 @@
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\HeaderActions;
 
 use Filament\Tables;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\HeaderActions\Action;
 use TomatoPHP\FilamentTranslations\Services\ExcelImportExportService;
 
 class ExportAction extends Action

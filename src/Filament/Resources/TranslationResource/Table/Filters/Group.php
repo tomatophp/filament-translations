@@ -7,7 +7,6 @@ use Spatie\TranslationLoader\LanguageLine;
 
 class Group extends Filter
 {
-
     public static function make(): Filters\SelectFilter
     {
         return Filters\SelectFilter::make('group')

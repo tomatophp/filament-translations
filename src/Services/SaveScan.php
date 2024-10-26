@@ -73,7 +73,7 @@ class SaveScan
             foreach ($locals as $locale => $lang) {
                 $text[$locale] = Lang::get($mainKey, [], $locale, $mainKey);
             }
-            $translation = Translation::make([
+            $translation = Translation::query()->create([
                 'namespace' => $namespace,
                 'group' => $group,
                 'key' => $key,

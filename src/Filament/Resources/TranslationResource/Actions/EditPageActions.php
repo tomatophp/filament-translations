@@ -2,8 +2,7 @@
 
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions;
 
-
-class EditPageActions
+final class EditPageActions
 {
     use Contracts\CanRegister;
 

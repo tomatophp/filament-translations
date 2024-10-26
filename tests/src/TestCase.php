@@ -18,7 +18,6 @@ use Orchestra\Testbench\TestCase as BaseTestCase;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use TomatoPHP\FilamentTranslationComponent\FilamentTranslationComponentServiceProvider;
 use TomatoPHP\FilamentTranslations\FilamentTranslationsServiceProvider;
-use TomatoPHP\FilamentTranslations\Tests\Models\User;
 
 abstract class TestCase extends BaseTestCase
 {

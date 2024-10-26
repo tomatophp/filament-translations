@@ -2,7 +2,7 @@
 
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions;
 
-class ManagePageActions
+final class ManagePageActions
 {
     use Contracts\CanRegister;
 

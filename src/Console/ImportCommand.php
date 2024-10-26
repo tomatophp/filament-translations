@@ -29,7 +29,7 @@ class ImportCommand extends Command
     public function handle()
     {
         if (config('filament-translations.path_to_custom_import_command')) {
-            $response = spin(
+            spin(
                 function () {
                     $command = config('filament-translations.path_to_custom_import_command');
                     $command = new $command;
@@ -43,7 +43,7 @@ class ImportCommand extends Command
             return;
         }
 
-        $response = spin(
+        spin(
             function () {
                 $scan = new SaveScan;
                 $scan->save();
