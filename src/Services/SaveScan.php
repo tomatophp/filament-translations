@@ -4,6 +4,7 @@ namespace TomatoPHP\FilamentTranslations\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Lang;
 use TomatoPHP\FilamentTranslations\Models\Translation;
 
@@ -19,7 +20,9 @@ class SaveScan
     public function save()
     {
         $scanner = app(Scan::class);
-        collect($this->paths)->each(function ($path) use ($scanner) {
+        collect($this->paths)->filter(function($path) {
+            return File::exists($path);
+        })->each(function ($path) use ($scanner) {
             $scanner->addScannedPath($path);
         });
 
