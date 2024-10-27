@@ -51,6 +51,10 @@ return [
             'label' => 'Burmese',
             'flag' => 'mm',
         ],
+        'id' => [
+            'label' => 'Indonesia',
+            'flag' => 'id',
+        ],
     ],
 
     /*
