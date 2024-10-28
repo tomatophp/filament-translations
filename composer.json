@@ -11,7 +11,14 @@
         "database translations",
         "cache translations",
         "translation UI",
-        "filament plugin"
+        "filament plugin",
+        "laravel-translation-loader",
+        "translate",
+        "database",
+        "db",
+        "language",
+        "i8n",
+        "spatie"
     ],
     "license": "MIT",
     "autoload": {

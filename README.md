@@ -12,9 +12,11 @@ this plugin is build in [spatie/laravel-translation-loader](https://github.com/s
 
 ## Screenshots
 
-![Screenshot of list](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/list-view.png)
-![Screenshot of edit](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/edit-view.png)
-![Screenshot of settings](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/setting-view.png)
+![Screenshot of list](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/translations-list.png)
+![Screenshot of create](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/create.png)
+![Screenshot of edit](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/edit.png)
+![Screenshot of scan](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/scan.png)
+![Screenshot of import](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/import.png)
 
 ## Installation
 
