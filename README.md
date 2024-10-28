@@ -2,6 +2,9 @@
 
 # Filament Translations Manager
 
+[![Dependabot Updates](https://github.com/tomatophp/filament-translations/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/tomatophp/filament-translations/actions/workflows/dependabot/dependabot-updates)
+[![PHP Code Styling](https://github.com/tomatophp/filament-translations/actions/workflows/fix-php-code-styling.yml/badge.svg)](https://github.com/tomatophp/filament-translations/actions/workflows/fix-php-code-styling.yml)
+[![Tests](https://github.com/tomatophp/filament-translations/actions/workflows/tests.yml/badge.svg)](https://github.com/tomatophp/filament-translations/actions/workflows/tests.yml)
 [![Latest Stable Version](https://poser.pugx.org/tomatophp/filament-translations/version.svg)](https://packagist.org/packages/tomatophp/filament-translations)
 [![License](https://poser.pugx.org/tomatophp/filament-translations/license.svg)](https://packagist.org/packages/tomatophp/filament-translations)
 [![Downloads](https://poser.pugx.org/tomatophp/filament-translations/d/total.svg)](https://packagist.org/packages/tomatophp/filament-translations)
