@@ -44,19 +44,6 @@ it('can render translations list page', function () {
     livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)->assertSuccessful();
 });
 
-it('can render view translations page', function () {
-    if (config('filament-translations.modal')) {
-        livewire(TranslationResource\Pages\ManageTranslations::class, [
-            'record' => Translation::factory()->create(),
-        ])
-            ->mountAction('view')
-            ->assertSuccessful();
-    } else {
-        get(TranslationResource::getUrl('view', [
-            'record' => Translation::factory()->create(),
-        ]))->assertSuccessful();
-    }
-});
 
 it('can render translation create page', function () {
     if (filament('filament-translations')->allowCreate) {

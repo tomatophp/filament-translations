@@ -17,7 +17,6 @@ class TranslationActions
     private static function getDefaultActions(): array
     {
         return [
-            Actions\ViewAction::make(),
             Actions\EditAction::make(),
             Actions\DeleteAction::make(),
         ];
