@@ -44,7 +44,6 @@ it('can render translations list page', function () {
     livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)->assertSuccessful();
 });
 
-
 it('can render translation create page', function () {
     if (filament('filament-translations')->allowCreate) {
         if (config('filament-translations.modal')) {

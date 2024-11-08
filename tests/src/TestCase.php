@@ -23,8 +23,8 @@ use TomatoPHP\FilamentTranslations\Tests\Models\User;
 
 abstract class TestCase extends BaseTestCase
 {
-    use WithWorkbench;
     use RefreshDatabase;
+    use WithWorkbench;
 
     protected function defineDatabaseMigrations(): void
     {
@@ -60,7 +60,6 @@ abstract class TestCase extends BaseTestCase
         $app['config']->set('auth.guards.testing.provider', 'testing');
         $app['config']->set('auth.providers.testing.driver', 'eloquent');
         $app['config']->set('auth.providers.testing.model', User::class);
-        
 
         $app['config']->set('filament-translations.paths', [
             __DIR__ . '/../../vendor/orchestra/testbench-core/laravel',
