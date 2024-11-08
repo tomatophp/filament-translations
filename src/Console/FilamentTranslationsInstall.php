@@ -37,9 +37,6 @@ class FilamentTranslationsInstall extends Command
     {
         $this->info('Publish Vendor Assets');
         $this->artisanCommand(['migrate']);
-        $this->artisanCommand(['optimize:clear']);
-        $this->artisanCommand(['optimize']);
-        sleep(3);
         $this->info('Scanning for translations');
         $this->artisanCommand(['filament-translations:import']);
         $this->info('Filament Translations Manager installed successfully.');
