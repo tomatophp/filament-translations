@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9cead977-737e-49dd-851a-761fb1bb0aff" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/testbench.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/database/seeders/UserSeed.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/tests.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/tests.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/phpunit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/phpunit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Filament/Resources/TranslationResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Filament/Resources/TranslationResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Filament/Resources/TranslationResource/Table/TranslationActions.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Filament/Resources/TranslationResource/Table/TranslationActions.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/database/database.sqlite" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/src/TestCase.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/src/TestCase.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/src/TranslationResourceTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/src/TranslationResourceTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module.json" beforeDir="false" afterPath="$PROJECT_DIR$/module.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -274,7 +266,7 @@
       <option name="presentableId" value="Default" />
       <updated>1720327673578</updated>
       <workItem from="1720327675523" duration="25234000" />
-      <workItem from="1731091659644" duration="661000" />
+      <workItem from="1731091659644" duration="752000" />
     </task>
     <servers />
   </component>
