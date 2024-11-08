@@ -69,7 +69,7 @@ class TranslationResource extends Resource
             return [
                 'index' => \TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::route('/'),
                 'create' => \TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\CreateTranslation::route('/create'),
-                'edit' => \TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\EditTranslation::route('/{record}/edit')
+                'edit' => \TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\EditTranslation::route('/{record}/edit'),
             ];
         }
     }
