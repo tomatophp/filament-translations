@@ -56,7 +56,7 @@ class ScanPath extends Command
 
         [$trans, $__] = $scanner->getAllViewFilesWithTranslations();
 
-        //TODO: save translations to array file
+        // TODO: save translations to array file
         //        $trans->each(function ($trans) {
         //            list($group, $key) = explode('.', $trans, 2);
         //            $namespaceAndGroup = explode('::', $group, 2);

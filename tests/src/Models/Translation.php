@@ -12,7 +12,6 @@ class Translation extends LanguageLine
     use HasFactory;
     use SoftDeletes;
 
-
     /** @var array */
     public $guarded = ['id'];
 
