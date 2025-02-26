@@ -22,7 +22,7 @@ class Manager
     public function importTranslations($replace = false, $base = null, $import_group = false)
     {
         $counter = 0;
-        //allows for vendor lang files to be properly recorded through recursion.
+        // allows for vendor lang files to be properly recorded through recursion.
         $vendor = true;
         if ($base === null) {
             $base = lang_path();
@@ -31,7 +31,7 @@ class Manager
 
         foreach ($this->files->directories($base) as $langPath) {
             $locale = basename($langPath);
-            //import langfiles for each vendor
+            // import langfiles for each vendor
             if ($locale === 'vendor') {
                 foreach ($this->files->directories($langPath) as $vendor) {
                     $counter += $this->importTranslations($replace, $vendor);

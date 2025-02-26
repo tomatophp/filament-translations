@@ -79,7 +79,7 @@ class Scan
 
             '[\"]' . // Match "
             '(' . // Start a new group to match:
-            '[^"]+' . //Can have everything except "
+            '[^"]+' . // Can have everything except "
             //            '(?:[^"]|\\")+' . //Can have everything except " or can have escaped " like \", however it is not working as expected
             ')' . // Close group
             '[\"]' . // Closing quote
@@ -95,7 +95,7 @@ class Scan
 
             '[\']' . // Match '
             '(' . // Start a new group to match:
-            "[^']+" . //Can have everything except '
+            "[^']+" . // Can have everything except '
             //            "(?:[^']|\\')+" . //Can have everything except 'or can have escaped ' like \', however it is not working as expected
             ')' . // Close group
             '[\']' . // Closing quote
