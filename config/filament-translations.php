@@ -43,6 +43,10 @@ return [
             'label' => 'Arabic',
             'flag' => 'eg',
         ],
+        'fr' => [
+            'label' => 'French',
+            'flag' => 'fr',
+        ],
         'pt_BR' => [
             'label' => 'Português (Brasil)',
             'flag' => 'br',
