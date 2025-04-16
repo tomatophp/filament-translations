@@ -74,8 +74,8 @@ class SaveScan
             $locals = config('filament-translations.locals');
             $text = [];
             foreach ($locals as $locale => $lang) {
-                $translation = Lang::get(key: $key, fallback: str($key)->replace('.', ' ')->replace('_', ' ')->title()->toString());
-                $text[$locale] = ! is_array($translation) ? Lang::get($key) : '';
+                $translation = Lang::get(key: $key, locale: $locale, fallback: str($key)->replace('.', ' ')->replace('_', ' ')->title()->toString());
+                $text[$locale] = ! is_array($translation) ? $translation : '';
             }
             $translation = Translation::query()->create([
                 'namespace' => $namespace,
