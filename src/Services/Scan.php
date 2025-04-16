@@ -109,7 +109,10 @@ class Scan
         // FIXME maybe we can count how many times one translation is used and eventually display it to the user
 
         /** @var SplFileInfo $file */
-        foreach ($this->disk->allFiles($this->scannedPaths->toArray()) as $file) {
+        foreach (array_filter(
+            $this->disk->allFiles($this->scannedPaths->toArray()),
+            static fn($fileInfo) => $fileInfo->getExtension() === 'php'
+        ) as $file) {
             $dir = dirname($file);
             if (Str::startsWith($dir, $excludedPaths)) {
                 continue;
