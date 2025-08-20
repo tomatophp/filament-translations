@@ -51,9 +51,9 @@ it('can render translation create page', function () {
                 ->mountAction('create')
                 ->assertSuccessful();
         } else {
-            {
-                get(TranslationResource::getUrl('create'))->assertSuccessful();
-            }
+
+            get(TranslationResource::getUrl('create'))->assertSuccessful();
+
         }
     }
 });
@@ -158,11 +158,11 @@ it('can render translation edit page', function () {
             ->mountAction('edit')
             ->assertSuccessful();
     } else {
-        {
-            get(TranslationResource::getUrl('edit', [
-                'record' => Translation::factory()->create(),
-            ]))->assertSuccessful();
-        }
+
+        get(TranslationResource::getUrl('edit', [
+            'record' => Translation::factory()->create(),
+        ]))->assertSuccessful();
+
     }
 });
 

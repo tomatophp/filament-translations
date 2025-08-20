@@ -111,7 +111,7 @@ class Scan
         /** @var SplFileInfo $file */
         foreach (array_filter(
             $this->disk->allFiles($this->scannedPaths->toArray()),
-            static fn($fileInfo) => $fileInfo->getExtension() === 'php'
+            static fn ($fileInfo) => $fileInfo->getExtension() === 'php'
         ) as $file) {
             $dir = dirname($file);
             if (Str::startsWith($dir, $excludedPaths)) {
