@@ -1,4 +1,4 @@
-![Screenshot of Login](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg)
+![Screenshot of Login](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/fadymondy-tomato-translations.jpg)
 
 # Filament Translations Manager
 
@@ -219,15 +219,15 @@ public function boot()
     ManagePageActions::register([
         Filament\Actions\Action::make('action')
     ]);
-    
+
     EditPageActions::register([
         Filament\Actions\Action::make('action')
     ]);
-    
+
     ViewPageActions::register([
         Filament\Actions\Action::make('action')
     ]);
-    
+
     CreatePageActions::register([
         Filament\Actions\Action::make('action')
     ]);
