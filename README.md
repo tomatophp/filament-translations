@@ -39,6 +39,7 @@ Finally register the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 $panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
 ```
 
+
 ## Extensions
 
 - [Filament ChatGPT Auto Translation](https://www.github.com/tomatophp/filament-translations-gpt)
@@ -127,6 +128,15 @@ You can show or hide the buttons in the UI by changing the config file. By defau
 'show_scan_button' => false ,
 ```
 
+## Custom Resource Nav Label & Group
+
+you can custom your resource nav from config file
+
+```php
+    'navigation_group' => 'Settings',
+    'navigation_icon' => 'heroicon-m-language',
+```
+
 ## Custom Resource
 
 You can create your own resource to show the translations in the UI, add your custom resource class to the config file like this:
@@ -144,7 +154,7 @@ we have add a lot of hooks to make it easy to attach actions, columns, filters, 
 ### Table Columns
 
 ```php
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationTable;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Table\TranslationTable;
 
 public function boot()
 {
@@ -157,7 +167,7 @@ public function boot()
 ### Table Actions
 
 ```php
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Table\TranslationActions;
 
 public function boot()
 {
@@ -170,7 +180,7 @@ public function boot()
 ### Table Filters
 
 ```php
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationFilters;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Table\TranslationFilters;
 
 public function boot()
 {
@@ -183,7 +193,7 @@ public function boot()
 ### Table Bulk Actions
 
 ```php
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationBulkActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Table\TranslationBulkActions;
 
 public function boot()
 {
@@ -196,7 +206,7 @@ public function boot()
 ### From Components
 
 ```php
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Form\TranslationForm;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Form\TranslationForm;
 
 public function boot()
 {
@@ -209,28 +219,12 @@ public function boot()
 ### Page Actions
 
 ```php
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\ManagePageActions;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\EditPageActions;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\ViewPageActions;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\CreatePageActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ManageTranslation;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
 
 public function boot()
 {
-    ManagePageActions::register([
-        Filament\Actions\Action::make('action')
-    ]);
-
-    EditPageActions::register([
-        Filament\Actions\Action::make('action')
-    ]);
-
-    ViewPageActions::register([
-        Filament\Actions\Action::make('action')
-    ]);
-
-    CreatePageActions::register([
-        Filament\Actions\Action::make('action')
-    ]);
+    FilamentTranslations::register(Action::make(), ManageTranslation::class)
 }
 ```
 
