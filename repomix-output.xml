@@ -1,0 +1,4827 @@
+This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching these patterns are excluded: **/*.log, tmp/, .js, .html, .blade.php, .css, public/, vendor/, node_modules
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.github/
+  ISSUE_TEMPLATE/
+    bug.yml
+    config.yml
+  workflows/
+    dependabot-auto-merge.yml
+    fix-php-code-styling.yml
+    tests.yml
+  CONTRIBUTING.md
+  dependabot.yml
+  FUNDING.yml
+  SECURITY.md
+config/
+  filament-translations.php
+database/
+  migrations/
+    2022_01_25_010712_create_language_lines_table.php
+resources/
+  lang/
+    ar/
+      global.php
+      translation.php
+    de/
+      global.php
+      translation.php
+    en/
+      global.php
+      translation.php
+    es/
+      global.php
+      translation.php
+    fr/
+      global.php
+      translation.php
+    id/
+      global.php
+      translation.php
+    my/
+      global.php
+      translation.php
+    nl/
+      global.php
+      translation.php
+    pt_BR/
+      global.php
+      translation.php
+  views/
+    text-column.blade.php
+src/
+  Console/
+    FilamentTranslationsInstall.php
+    ImportCommand.php
+    ScanPath.php
+  Exports/
+    CustomTranslationExport.php
+    TranslationsExport.php
+  Facade/
+    FilamentTranslations.php
+  Filament/
+    Resources/
+      Translations/
+        Actions/
+          Action.php
+          ClearAction.php
+          CreateAction.php
+          DeleteAction.php
+          EditAction.php
+          ScanAction.php
+          ViewAction.php
+        Pages/
+          CreateTranslation.php
+          EditTranslation.php
+          ListTranslations.php
+          ManageTranslations.php
+        Schemas/
+          Components/
+            Component.php
+            Group.php
+            Key.php
+            Text.php
+          TranslationForm.php
+        Tables/
+          Actions/
+            Action.php
+            DeleteAction.php
+            EditAction.php
+            ViewAction.php
+          BulkActions/
+            Action.php
+            DeleteAction.php
+          Columns/
+            Column.php
+            CreatedAt.php
+            Key.php
+            Text.php
+            UpdatedAt.php
+          Filters/
+            Filter.php
+            Group.php
+            Text.php
+          HeaderActions/
+            Action.php
+            ExportAction.php
+            ImportAction.php
+          TranslationActions.php
+          TranslationBulkActions.php
+          TranslationFilters.php
+          TranslationHeaderActions.php
+          TranslationsTable.php
+        TranslationResource.php
+  Imports/
+    CustomTranslationImport.php
+    TranslationsImport.php
+  Jobs/
+    ScanJob.php
+  Models/
+    Translation.php
+  Services/
+    ExcelImportExportService.php
+    FilamentTranslationsServices.php
+    Manager.php
+    SaveScan.php
+    Scan.php
+  FilamentTranslationsPlugin.php
+  FilamentTranslationsServiceProvider.php
+tests/
+  database/
+    factories/
+      TranslationFactory.php
+      UserFactory.php
+    seeders/
+      UserSeed.php
+  src/
+    Models/
+      Translation.php
+      User.php
+    AdminPanelProvider.php
+    DebugTest.php
+    PluginTest.php
+    TestCase.php
+    TranslationResourceTest.php
+  Pest.php
+.gitignore
+.php-cs-fixer.dist.php
+CODE_OF_CONDUCT.md
+composer.json
+fadymondy-tomato-translations.md
+LICENSE.md
+module.json
+phpunit.xml
+pint.json
+README.md
+SECURITY.md
+testbench.yaml
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".github/FUNDING.yml">
+github: [fadymondy]
+</file>
+
+<file path="src/Facade/FilamentTranslations.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Facade;
+
+use Illuminate\Support\Facades\Facade;
+
+class FilamentTranslations extends Facade
+{
+    protected static function getFacadeAccessor()
+    {
+        return 'filament-translations';
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Actions/Action.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions;
+
+abstract class Action
+{
+    abstract public static function make(): \Filament\Actions\Action;
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Actions/ClearAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions;
+
+use Filament\Actions;
+use Filament\Notifications\Notification;
+use TomatoPHP\FilamentTranslations\Models\Translation;
+
+class ClearAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\Action::make('clear')
+            ->requiresConfirmation()
+            ->icon('heroicon-o-trash')
+            ->hiddenLabel()
+            ->tooltip(trans('filament-translations::translation.clear'))
+            ->action(function () {
+                Translation::query()->truncate();
+
+                Notification::make()
+                    ->title(trans('filament-translations::translation.clear_notifications'))
+                    ->success()
+                    ->send();
+            })
+            ->color('danger')
+            ->label(trans('filament-translations::translation.clear'));
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Actions/CreateAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions;
+
+use Filament\Actions;
+
+class CreateAction extends Action
+{
+    public static function make(): Actions\CreateAction
+    {
+        return Actions\CreateAction::make();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Actions/DeleteAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions;
+
+use Filament\Actions;
+
+class DeleteAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\DeleteAction::make('deleteSelectedTranslation');
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Actions/EditAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions;
+
+use Filament\Actions;
+
+class EditAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\EditAction::make();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Actions/ScanAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions;
+
+use Filament\Actions;
+use Filament\Notifications\Notification;
+use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
+use TomatoPHP\FilamentTranslations\Services\SaveScan;
+
+use function Laravel\Prompts\spin;
+
+class ScanAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\Action::make('scan')
+            ->requiresConfirmation()
+            ->icon('heroicon-m-magnifying-glass')
+            ->hiddenLabel()
+            ->tooltip(trans('filament-translations::translation.scan'))
+            ->action(function () {
+                if (config('filament-translations.use_queue_on_scan')) {
+                    dispatch(new ScanJob);
+                } elseif (config('filament-translations.path_to_custom_import_command')) {
+                    spin(
+                        function () {
+                            $command = config('filament-translations.path_to_custom_import_command');
+                            $command = new $command;
+                            $command->handle();
+                        },
+                        'Fetching keys...'
+                    );
+                } else {
+                    $scan = new SaveScan;
+                    $scan->save();
+                }
+
+                Notification::make()
+                    ->title(trans('filament-translations::translation.loaded'))
+                    ->success()
+                    ->send();
+            })
+            ->label(trans('filament-translations::translation.scan'));
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Actions/ViewAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions;
+
+use Filament\Actions;
+
+class ViewAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\ViewAction::make();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Pages/CreateTranslation.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages;
+
+use Filament\Panel;
+use Filament\Resources\Pages\CreateRecord;
+use TomatoPHP\FilamentDeveloperGate\Http\Middleware\DeveloperGateMiddleware;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
+
+class CreateTranslation extends CreateRecord
+{
+    protected static string $resource = TranslationResource::class;
+
+    public static function getRouteMiddleware(Panel $panel): string | array
+    {
+        if (config('filament-translations.use_developer_gate')) {
+            return [
+                'auth',
+                'verified',
+                DeveloperGateMiddleware::class,
+            ];
+        }
+
+        return [];
+    }
+
+    public function getHeaderActions(): array
+    {
+        return FilamentTranslations::getActions(self::class);
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Pages/EditTranslation.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages;
+
+use Filament\Panel;
+use Filament\Resources\Pages\EditRecord;
+use TomatoPHP\FilamentDeveloperGate\Http\Middleware\DeveloperGateMiddleware;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
+
+class EditTranslation extends EditRecord
+{
+    protected static string $resource = TranslationResource::class;
+
+    public static function getRouteMiddleware(Panel $panel): string | array
+    {
+        if (config('filament-translations.use_developer_gate')) {
+            return [
+                'auth',
+                'verified',
+                DeveloperGateMiddleware::class,
+            ];
+        }
+
+        return [];
+    }
+
+    public function getHeaderActions(): array
+    {
+        return FilamentTranslations::getActions(self::class);
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Pages/ListTranslations.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages;
+
+use Filament\Panel;
+use Filament\Resources\Pages\ListRecords;
+use TomatoPHP\FilamentDeveloperGate\Http\Middleware\DeveloperGateMiddleware;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
+
+class ListTranslations extends ListRecords
+{
+    protected static string $resource = TranslationResource::class;
+
+    public static function getRouteMiddleware(Panel $panel): string | array
+    {
+        if (config('filament-translations.use_developer_gate')) {
+            return [
+                'auth',
+                'verified',
+                DeveloperGateMiddleware::class,
+            ];
+        }
+
+        return [];
+    }
+
+    public function getHeaderActions(): array
+    {
+        return FilamentTranslations::getActions(self::class);
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Pages/ManageTranslations.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages;
+
+use Filament\Panel;
+use Filament\Resources\Pages\ManageRecords;
+use TomatoPHP\FilamentDeveloperGate\Http\Middleware\DeveloperGateMiddleware;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
+
+class ManageTranslations extends ManageRecords
+{
+    protected static string $resource = TranslationResource::class;
+
+    public function getTitle(): string
+    {
+        return trans('filament-translations::translation.title.home');
+    }
+
+    public static function getRouteMiddleware(Panel $panel): string | array
+    {
+        if (config('filament-translations.use_developer_gate')) {
+            return [
+                'auth',
+                'verified',
+                DeveloperGateMiddleware::class,
+            ];
+        }
+
+        return [];
+    }
+
+    public function getHeaderActions(): array
+    {
+        return FilamentTranslations::getActions(self::class);
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Schemas/Components/Component.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Schemas\Components;
+
+use Filament\Forms\Components\Field;
+
+abstract class Component
+{
+    abstract public static function make(): Field;
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Schemas/Components/Group.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Schemas\Components;
+
+use Filament\Forms;
+use Filament\Schemas\Components\Utilities\Get;
+
+class Group extends Component
+{
+    public static function make(): Forms\Components\TextInput
+    {
+        return Forms\Components\TextInput::make('group')
+            ->label(trans('filament-translations::translation.group'))
+            ->required()
+            ->disabled(fn (Get $get) => $get('id') !== null)
+            ->maxLength(255);
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Schemas/Components/Key.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Schemas\Components;
+
+use Filament\Forms;
+use Filament\Schemas\Components\Utilities\Get;
+
+class Key extends Component
+{
+    public static function make(): Forms\Components\TextInput
+    {
+        return Forms\Components\TextInput::make('key')
+            ->label(trans('filament-translations::translation.key'))
+            ->disabled(fn (Get $get) => $get('id') !== null)
+            ->required()
+            ->maxLength(255);
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Schemas/Components/Text.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Schemas\Components;
+
+class Text extends Component
+{
+    public static function make(): \TomatoPHP\FilamentTranslationComponent\Components\Translation
+    {
+        return \TomatoPHP\FilamentTranslationComponent\Components\Translation::make('text')
+            ->label(trans('filament-translations::translation.text'))
+            ->textarea()
+            ->nullable()
+            ->columnSpanFull();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Schemas/TranslationForm.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Schemas;
+
+use Filament\Forms\Components\Field;
+use Filament\Schemas\Schema;
+
+class TranslationForm
+{
+    protected static array $schema = [];
+
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema->schema(self::getSchema());
+    }
+
+    public static function getDefaultComponents(): array
+    {
+        return [
+            Components\Group::make(),
+            Components\Key::make(),
+            Components\Text::make(),
+        ];
+    }
+
+    private static function getSchema(): array
+    {
+        return array_merge(self::getDefaultComponents(), self::$schema);
+    }
+
+    public static function register(Field | array $component): void
+    {
+        if (is_array($component)) {
+            foreach ($component as $item) {
+                if ($item instanceof Field) {
+                    self::$schema[] = $item;
+                }
+            }
+
+        } else {
+            self::$schema[] = $component;
+        }
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Actions/Action.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Actions;
+
+abstract class Action
+{
+    abstract public static function make(): \Filament\Actions\Action;
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Actions/DeleteAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Actions;
+
+use Filament\Actions;
+
+class DeleteAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\DeleteAction::make()
+            ->iconButton()
+            ->tooltip(__('filament-actions::delete.single.label'));
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Actions/EditAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Actions;
+
+use Filament\Actions;
+
+class EditAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\EditAction::make()
+            ->iconButton()
+            ->tooltip(__('filament-actions::edit.single.label'));
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Actions/ViewAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Actions;
+
+use Filament\Actions;
+
+class ViewAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\ViewAction::make()
+            ->iconButton()
+            ->tooltip(__('filament-actions::view.single.label'));
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/BulkActions/Action.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\BulkActions;
+
+use Filament\Actions\BulkAction;
+
+abstract class Action
+{
+    abstract public static function make(): BulkAction;
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/BulkActions/DeleteAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\BulkActions;
+
+use Filament\Actions;
+
+class DeleteAction extends Action
+{
+    public static function make(): Actions\DeleteBulkAction
+    {
+        return Actions\DeleteBulkAction::make();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Columns/Column.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Columns;
+
+abstract class Column
+{
+    abstract public static function make(): \Filament\Tables\Columns\Column;
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Columns/CreatedAt.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Columns;
+
+use Filament\Tables;
+
+class CreatedAt extends Column
+{
+    public static function make(): Tables\Columns\TextColumn
+    {
+        return Tables\Columns\TextColumn::make('created_at')
+            ->dateTime()
+            ->description(fn ($record) => $record->created_at->diffForHumans())
+            ->toggleable(isToggledHiddenByDefault: true)
+            ->sortable();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Columns/Key.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Columns;
+
+use Filament\Tables;
+
+class Key extends Column
+{
+    public static function make(): Tables\Columns\TextColumn
+    {
+        return Tables\Columns\TextColumn::make('key')
+            ->label(trans('filament-translations::translation.key'))
+            ->searchable()
+            ->limit(30)
+            ->tooltip(fn ($record) => $record->key)
+            ->sortable();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Columns/Text.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Columns;
+
+use Filament\Tables;
+
+class Text extends Column
+{
+    public static function make(): Tables\Columns\TextColumn
+    {
+        return Tables\Columns\TextColumn::make('text')
+            ->label(trans('filament-translations::translation.text'))
+            ->view('filament-translations::text-column')
+            ->searchable();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Columns/UpdatedAt.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Columns;
+
+use Filament\Tables;
+
+class UpdatedAt extends Column
+{
+    public static function make(): Tables\Columns\TextColumn
+    {
+        return Tables\Columns\TextColumn::make('updated_at')
+            ->dateTime()
+            ->description(fn ($record) => $record->updated_at->diffForHumans())
+            ->toggleable(isToggledHiddenByDefault: true)
+            ->sortable();
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Filters/Filter.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Filters;
+
+abstract class Filter
+{
+    abstract public static function make(): \Filament\Tables\Filters\BaseFilter;
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Filters/Group.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Filters;
+
+use Filament\Tables\Filters;
+use Spatie\TranslationLoader\LanguageLine;
+
+class Group extends Filter
+{
+    public static function make(): Filters\SelectFilter
+    {
+        return Filters\SelectFilter::make('group')
+            ->label(trans('filament-translations::global.filter_by_group'))
+            ->options(fn (): array => LanguageLine::query()->groupBy('group')->pluck('group', 'group')->all());
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/Filters/Text.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\Filters;
+
+use Filament\Tables\Filters;
+use Illuminate\Database\Eloquent\Builder;
+
+class Text extends Filter
+{
+    public static function make(): Filters\Filter
+    {
+        return Filters\Filter::make('text')
+            ->label(trans('filament-translations::global.filter_by_null_text'))
+            ->query(fn (Builder $query): Builder => $query->whereJsonContains('text', []));
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/HeaderActions/Action.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\HeaderActions;
+
+abstract class Action
+{
+    abstract public static function make(): \Filament\Actions\Action;
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/HeaderActions/ExportAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\HeaderActions;
+
+use Filament\Actions;
+use TomatoPHP\FilamentTranslations\Services\ExcelImportExportService;
+
+class ExportAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\Action::make('export')
+            ->label(trans('filament-translations::translation.export'))
+            ->icon('heroicon-o-document-arrow-down')
+            ->color('danger')
+            ->action(fn () => ExcelImportExportService::export());
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/HeaderActions/ImportAction.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\HeaderActions;
+
+use Filament\Actions;
+use Filament\Forms\Components\FileUpload;
+use TomatoPHP\FilamentTranslations\Services\ExcelImportExportService;
+
+class ImportAction extends Action
+{
+    public static function make(): Actions\Action
+    {
+        return Actions\Action::make('import')
+            ->label(trans('filament-translations::translation.import'))
+            ->form([
+                FileUpload::make('file')
+                    ->label(trans('filament-translations::translation.import-file'))
+                    ->acceptedFileTypes([
+                        'application/csv',
+                        'application/vnd.ms-excel',
+                        'application/vnd.msexcel',
+                        'text/csv',
+                        'text/anytext',
+                        'text/plain',
+                        'text/x-c',
+                        'text/comma-separated-values',
+                        'inode/x-empty',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    ])
+                    ->storeFiles(false),
+            ])
+            ->icon('heroicon-o-document-arrow-up')
+            ->color('success')
+            ->action(fn (array $data) => ExcelImportExportService::import($data['file']));
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/TranslationActions.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
+
+class TranslationActions
+{
+    /**
+     * @var array
+     */
+    protected static $actions = [];
+
+    public static function make(): array
+    {
+        return self::getActions();
+    }
+
+    private static function getDefaultActions(): array
+    {
+        return [
+            Actions\EditAction::make(),
+            Actions\DeleteAction::make(),
+        ];
+    }
+
+    private static function getActions(): array
+    {
+        return array_merge(self::getDefaultActions(), self::$actions);
+    }
+
+    public static function register(\Filament\Actions\Action | array $action): void
+    {
+        if (is_array($action)) {
+            foreach ($action as $item) {
+                if ($item instanceof \Filament\Actions\Action) {
+                    self::$actions[] = $item;
+                }
+            }
+        } else {
+            self::$actions[] = $action;
+        }
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/TranslationBulkActions.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
+
+use Filament\Actions\BulkAction;
+
+class TranslationBulkActions
+{
+    /**
+     * @var array
+     */
+    protected static $actions = [];
+
+    public static function make(): array
+    {
+        return self::getActions();
+    }
+
+    private static function getDefaultActions(): array
+    {
+        return [
+            BulkActions\DeleteAction::make(),
+        ];
+    }
+
+    private static function getActions(): array
+    {
+        return array_merge(self::getDefaultActions(), self::$actions);
+    }
+
+    public static function register(BulkAction | array $action): void
+    {
+        if (is_array($action)) {
+            foreach ($action as $item) {
+                if ($item instanceof BulkAction) {
+                    self::$actions[] = $item;
+                }
+            }
+        } else {
+            self::$actions[] = $action;
+        }
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/TranslationFilters.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
+
+class TranslationFilters
+{
+    /**
+     * @var array
+     */
+    protected static $filters = [];
+
+    public static function make(): array
+    {
+        return self::getFilters();
+    }
+
+    private static function getDefaultFilters(): array
+    {
+        return [
+            Filters\Group::make(),
+            Filters\Text::make(),
+        ];
+    }
+
+    private static function getFilters(): array
+    {
+        return array_merge(self::getDefaultFilters(), self::$filters);
+    }
+
+    public static function register(\Filament\Tables\Filters\BaseFilter | array $action): void
+    {
+        if (is_array($action)) {
+            foreach ($action as $item) {
+                if ($item instanceof \Filament\Tables\Filters\BaseFilter) {
+                    self::$filters[] = $item;
+                }
+            }
+        } else {
+            self::$filters[] = $action;
+        }
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/TranslationHeaderActions.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
+
+class TranslationHeaderActions
+{
+    /**
+     * @var array
+     */
+    protected static $actions = [];
+
+    public static function make(): array
+    {
+        return self::getActions();
+    }
+
+    private static function getDefaultActions(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    private static function getActions(): array
+    {
+        return array_merge(self::getDefaultActions(), self::$actions);
+    }
+
+    public static function register(\Filament\Actions\Action | array $action): void
+    {
+        if (is_array($action)) {
+            foreach ($action as $item) {
+                if ($item instanceof \Filament\Actions\Action) {
+                    self::$actions[] = $item;
+                }
+            }
+        } else {
+            self::$actions[] = $action;
+        }
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/Tables/TranslationsTable.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
+
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Table;
+
+class TranslationsTable
+{
+    protected static array $columns = [];
+
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->deferLoading()
+            ->toolbarActions(TranslationBulkActions::make())
+            ->recordActions(TranslationActions::make())
+            ->filters(TranslationFilters::make())
+            ->headerActions(TranslationHeaderActions::make())
+            ->deferLoading()
+            ->defaultSort('key')
+            ->striped()
+            ->columns(self::getColumns());
+    }
+
+    public static function getDefaultColumns(): array
+    {
+        return [
+            Columns\Key::make(),
+            Columns\Text::make(),
+            Columns\CreatedAt::make(),
+            Columns\UpdatedAt::make(),
+        ];
+    }
+
+    private static function getColumns(): array
+    {
+        return array_merge(self::getDefaultColumns(), self::$columns);
+    }
+
+    public static function register(Column | array $column): void
+    {
+        if (is_array($column)) {
+            foreach ($column as $item) {
+                if ($item instanceof Column) {
+                    self::$columns[] = $item;
+                }
+            }
+        } else {
+            self::$columns[] = $column;
+        }
+    }
+}
+</file>
+
+<file path="src/Filament/Resources/Translations/TranslationResource.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations;
+
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\CreateTranslation;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\EditTranslation;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ManageTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Schemas\TranslationForm;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\TranslationsTable;
+use TomatoPHP\FilamentTranslations\Models\Translation;
+
+class TranslationResource extends Resource
+{
+    protected static ?string $model = Translation::class;
+
+    protected static ?string $slug = 'translations';
+
+    protected static ?string $recordTitleAttribute = 'key';
+
+    protected static bool $isScopedToTenant = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return config('filament-translations.register_navigation', true) && (! config('filament-translations.hide_navigation_when_developer_gate'));
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('filament-translations::translation.label');
+    }
+
+    public static function getLabel(): ?string
+    {
+        return trans('filament-translations::translation.single');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return config('filament-translations.navigation_group') ? (str(config('filament-translations.navigation_group'))->contains('.') ? trans(config('filament-translations.navigation_group')) : config('filament-translations.navigation_group')) : trans('filament-translations::translation.group');
+    }
+
+    public static function getNavigationIcon(): string
+    {
+        return config('filament-translations.navigation_icon', 'heroicon-m-language');
+    }
+
+    public function getTitle(): string
+    {
+        return trans('filament-translations::translation.title.home');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return TranslationForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return TranslationsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        if (config('filament-translations.modal')) {
+            return [
+                'index' => ManageTranslations::route('/'),
+            ];
+        } else {
+            return [
+                'index' => ListTranslations::route('/'),
+                'create' => CreateTranslation::route('/create'),
+                'edit' => EditTranslation::route('/{record}/edit'),
+            ];
+        }
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+}
+</file>
+
+<file path="src/Services/FilamentTranslationsServices.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Services;
+
+use Filament\Actions\Action;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations;
+
+class FilamentTranslationsServices
+{
+    private array $actions = [];
+
+    public function register(array | Action $action, string $page = ListTranslations::class): void
+    {
+        if (is_array($action)) {
+            foreach ($action as $item) {
+                if ($item instanceof Action) {
+                    $this->actions[$page][] = $item;
+                }
+            }
+        } else {
+            $this->actions[$page][] = $action;
+        }
+
+    }
+
+    public function getActions(string $page = ListTranslations::class): array
+    {
+        return $this->actions[$page] ?? [];
+    }
+}
+</file>
+
+<file path="fadymondy-tomato-translations.md">
+---
+name: Translations Manager
+slug: fadymondy-tomato-translations
+author_slug: fadymondy
+categories: [developer-tool]
+description: Manage your translation with DB and cache, you can scan your languages tags like trans(), __(), and get the string inside and translate them use UI
+discord_url:
+docs_url: https://raw.githubusercontent.com/tomatophp/filament-translations/master/README.md
+github_repository: tomatophp/filament-translations
+has_dark_theme: true
+has_translations: true
+versions: [3,4]
+publish_date: 2024-04-06
+---
+</file>
+
+<file path="LICENSE.md">
+The MIT License (MIT)
+
+Copyright (c)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</file>
+
+<file path=".github/ISSUE_TEMPLATE/bug.yml">
+name: Bug Report
+description: Report an Issue or Bug with the Package
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We're sorry to hear you have a problem. Can you help us solve it by providing the following details.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect to happen?
+      placeholder: I cannot currently do X thing because when I do, it breaks X thing.
+    validations:
+      required: true
+  - type: textarea
+    id: how-to-reproduce
+    attributes:
+      label: How to reproduce the bug
+      description: How did this occur, please add any config values used and provide a set of reliable steps if possible.
+      placeholder: When I do X I see Y.
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: Package Version
+      description: What version of our Package are you running? Please be as specific as possible
+      placeholder: 2.0.0
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP Version
+      description: What version of PHP are you running? Please be as specific as possible
+      placeholder: 8.2.0
+    validations:
+      required: true
+  - type: input
+    id: laravel-version
+    attributes:
+      label: Laravel Version
+      description: What version of Laravel are you running? Please be as specific as possible
+      placeholder: 9.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-systems
+    attributes:
+      label: Which operating systems does with happen with?
+      description: You may select more than one.
+      multiple: true
+      options:
+        - macOS
+        - Windows
+        - Linux
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Use this field to provide any other notes that you feel might be relevant to the issue.
+    validations:
+      required: false
+</file>
+
+<file path=".github/ISSUE_TEMPLATE/config.yml">
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/tomatophp/filament-translations/discussions/new?category=q-a
+    about: Ask the community for help
+  - name: Request a feature
+    url: https://github.com/tomatophp/filament-translations/discussions/new?category=ideas
+    about: Share ideas for new features
+  - name: Report a security issue
+    url: https://github.com/tomatophp/filament-translations/security/policy
+    about: Learn how to notify us for sensitive bugs
+</file>
+
+<file path=".github/workflows/fix-php-code-styling.yml">
+name: 'PHP Code Styling'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.php'
+
+permissions:
+  contents: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Fix PHP code style issues
+        uses: aglipanci/laravel-pint-action@v2
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Format Code"
+          commit_user_name: 'GitHub Actions'
+</file>
+
+<file path=".github/CONTRIBUTING.md">
+# Contributing
+
+Contributions are **welcome** and will be fully **credited**.
+
+Please read and understand the contribution guide before creating an issue or pull request.
+
+## Etiquette
+
+This project is open source, and as such, the maintainers give their free time to build and maintain the source code
+held within. They make the code freely available in the hope that it will be of use to other developers. It would be
+extremely unfair for them to suffer abuse or anger for their hard work.
+
+Please be considerate towards maintainers when raising issues or presenting pull requests. Let's show the
+world that developers are civilized and selfless people.
+
+It's the duty of the maintainer to ensure that all submissions to the project are of sufficient
+quality to benefit the project. Many developers have different skills, strengths, and weaknesses. Respect the maintainer's decision, and do not be upset or abusive if your submission is not used.
+
+## Viability
+
+When requesting or submitting new features, first consider whether it might be useful to others. Open
+source projects are used by many developers, who may have entirely different needs to your own. Think about
+whether or not your feature is likely to be used by other users of the project.
+
+## Procedure
+
+Before filing an issue:
+
+- Attempt to replicate the problem, to ensure that it wasn't a coincidental incident.
+- Check to make sure your feature suggestion isn't already present within the project.
+- Check the pull requests tab to ensure that the bug doesn't have a fix in progress.
+- Check the pull requests tab to ensure that the feature isn't already in progress.
+
+Before submitting a pull request:
+
+- Check the codebase to ensure that your feature doesn't already exist.
+- Check the pull requests to ensure that another person hasn't already submitted the feature or fix.
+
+## Requirements
+
+If the project maintainer has any additional requirements, you will find them listed here.
+
+- **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](https://pear.php.net/package/PHP_CodeSniffer).
+
+- **Add tests!** - Your patch won't be accepted if it doesn't have tests.
+
+- **Document any change in behaviour** - Make sure the `README.md` and any other relevant documentation are kept up-to-date.
+
+- **Consider our release cycle** - We try to follow [SemVer v2.0.0](https://semver.org/). Randomly breaking public APIs is not an option.
+
+- **One pull request per feature** - If you want to do more than one thing, send multiple pull requests.
+
+- **Send coherent history** - Make sure each individual commit in your pull request is meaningful. If you had to make multiple intermediate commits while developing, please [squash them](https://www.git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Changing-Multiple-Commit-Messages) before submitting.
+
+**Happy coding**!
+</file>
+
+<file path=".github/dependabot.yml">
+# Please see the documentation for all configuration options:
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+</file>
+
+<file path=".github/SECURITY.md">
+# Security Policy
+
+If you discover any security related issues, please email info@3x1.io instead of using the issue tracker.
+</file>
+
+<file path="database/migrations/2022_01_25_010712_create_language_lines_table.php">
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateLanguageLinesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('language_lines', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('group');
+            $table->index('group');
+            $table->text('key');
+            $table->jsonb('text');
+            $table->jsonb('metadata')->nullable();
+            $table->string('namespace')->default('*');
+            $table->index('namespace');
+            $table->softDeletes();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('language_lines');
+    }
+}
+</file>
+
+<file path="resources/lang/ar/global.php">
+<?php
+
+return [
+    'created_at' => 'تمت الاضافة في',
+    'updated_at' => 'تم التعديل في',
+    'filter_by_group' => 'تصفية بالمجموعة',
+    'filter_by_null_text' => 'تصفية بالنصوص الغير مترجمة',
+];
+</file>
+
+<file path="resources/lang/en/global.php">
+<?php
+
+return [
+    'created_at' => 'Created At',
+    'updated_at' => 'Updated At',
+    'filter_by_group' => 'Filter by Group',
+    'filter_by_null_text' => 'Filter by Empty Text',
+];
+</file>
+
+<file path="resources/lang/es/global.php">
+<?php
+
+return [
+    'created_at' => 'Creado',
+    'updated_at' => 'Modificado',
+    'filter_by_group' => 'Filter by Group',
+    'filter_by_null_text' => 'Filter by Empty Text',
+];
+</file>
+
+<file path="resources/lang/fr/global.php">
+<?php
+
+return [
+    'created_at' => 'Créé le',
+    'updated_at' => 'Mis à jour le',
+    'filter_by_group' => 'Filtrer par groupe',
+    'filter_by_null_text' => 'Filtrer par texte vide',
+];
+</file>
+
+<file path="resources/lang/fr/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'Traductions',
+        'list' => 'Traductions',
+        'create' => 'Créer une traduction',
+        'edit' => 'Modifier une traduction',
+    ],
+    'label' => 'Traductions',
+    'single' => 'Traduction',
+    'group' => 'Paramètres',
+    'gpt_scan_language' => 'Langue',
+    'gpt_scan' => 'Utiliser GPT',
+    'gpt_scan_notification_start' => 'Le scan GPT a commencé',
+    'gpt_scan_notifications_done' => 'Le scan GPT est terminé',
+    'google_scan' => 'Utiliser Google Traduction',
+    'google_scan_notifications_start' => 'Le scan Google Traduction a commencé',
+    'google_scan_notifications_done' => 'Le scan Google Traduction est terminé',
+    'clear_notifications' => 'Les traductions ont été effacées',
+    'clear' => 'Effacer toutes les traductions',
+    'key' => 'Clé',
+    'text' => 'Texte',
+    'scan' => 'Scanner les nouvelles langues',
+    'namespace' => 'Espace de noms',
+    'notification' => 'La langue a été changée avec succès',
+    'loaded' => 'La liste des traductions a été mise à jour',
+    'uploaded' => 'Les traductions ont été importées avec succès',
+    'import' => 'Importer',
+    'export' => 'Exporter',
+    'import-file' => 'Sélectionnez le fichier exporté après traduction',
+    'menu' => 'Changer de langue',
+    'modal' => [
+        'heading' => 'Mettre à jour la langue actuelle',
+        'button' => 'Enregistrer la langue',
+        'setting' => 'Paramètres',
+        'select' => 'Langue',
+    ],
+    'lang' => [
+        'ar' => 'Arabe',
+        'en' => 'Anglais',
+        'fr' => 'Français',
+        'pt_BR' => 'Portugais (Brésil)',
+        'my' => 'Birman',
+        'de' => 'Allemand',
+    ],
+];
+</file>
+
+<file path="resources/lang/id/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'Terjemahan',
+        'list' => 'Terjemahan',
+        'create' => 'Buat Terjemahan',
+        'edit' => 'Edit Terjemahan',
+    ],
+    'label' => 'Terjemahan',
+    'single' => 'Terjemahan',
+    'group' => 'Pengaturan',
+    'gpt_scan_language' => 'Bahasa',
+    'gpt_scan' => 'Gunakan GPT',
+    'gpt_scan_notification_start' => 'Pemindaian GPT telah dimulai',
+    'gpt_scan_notifications_done' => 'Pemindaian GPT telah selesai',
+    'google_scan' => 'Gunakan Google Translate',
+    'google_scan_notifications_start' => 'Pemindaian Google-Translate telah dimulai',
+    'google_scan_notifications_done' => 'Pemindaian Google-Translate telah selesai',
+    'clear_notifications' => 'Terjemahan telah dihapus',
+    'clear' => 'Hapus Semua Terjemahan',
+    'key' => 'Kunci',
+    'text' => 'Teks',
+    'scan' => 'Pindai Bahasa Baru',
+    'namespace' => 'Namespace',
+    'notification' => 'Bahasa telah berhasil diubah',
+    'loaded' => 'Daftar terjemahan telah diperbarui',
+    'uploaded' => 'Terjemahan telah berhasil diunggah',
+    'import' => 'Impor',
+    'export' => 'Ekspor',
+    'import-file' => 'Pilih File yang Diimpor Setelah Menerjemahkannya',
+    'menu' => 'Ubah Bahasa',
+    'modal' => [
+        'heading' => 'Perbarui bahasa saat ini',
+        'button' => 'Simpan, bahasa',
+        'setting' => 'Pengaturan',
+        'select' => 'Bahasa',
+    ],
+    'lang' => [
+        'ar' => 'Arab',
+        'en' => 'Inggris',
+        'pt_BR' => 'Português (Brasil)',
+        'my' => 'Burmese',
+        'de' => 'Jerman',
+    ],
+];
+</file>
+
+<file path="resources/lang/my/global.php">
+<?php
+
+return [
+    'created_at' => 'တည်ဆောက်သောနေ့',
+    'updated_at' => 'ပြုပြင်သောနေ့',
+    'filter_by_group' => 'Filter by Group',
+    'filter_by_null_text' => 'Filter by Empty Text',
+];
+</file>
+
+<file path="resources/lang/pt_BR/global.php">
+<?php
+
+return [
+    'created_at' => 'Criado em',
+    'updated_at' => 'Atualizado em',
+    'filter_by_group' => 'Filter by Group',
+    'filter_by_null_text' => 'Filter by Empty Text',
+];
+</file>
+
+<file path="resources/views/text-column.blade.php">
+<div class="my-4">
+    @if(is_array($getState()))
+        <div>
+            @foreach($getState() as $key=>$item)
+                <div class="fi-sidebar-group-btn ">
+                    <div>
+                        <x-filament::badge>
+                            {{ config('filament-translations.locals')[$key]['label'] }}
+                        </x-filament::badge>
+                    </div>
+                    <div x-tooltip="{content: '{{ $item }}', theme: $store.theme}">{{ \Str::limit($item, 30) }}</div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+</file>
+
+<file path="src/Exports/TranslationsExport.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Exports;
+
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Spatie\TranslationLoader\LanguageLine;
+
+class TranslationsExport implements FromCollection, WithHeadings, WithMapping
+{
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function collection()
+    {
+        return LanguageLine::all();
+    }
+
+    public function map($line): array
+    {
+        $exportArray = [
+            $line->id,
+            $line->key,
+        ];
+
+        $locales = config('filament-translations.locals');
+        foreach ($locales as $key => $value) {
+            $exportArray[] = $line->text[$key] ?? null;
+        }
+
+        return $exportArray;
+    }
+
+    public function headings(): array
+    {
+        $headers = [
+            'id',
+            'key',
+        ];
+
+        $locales = config('filament-translations.locals');
+        foreach ($locales as $key => $value) {
+            $headers[] = $value['label'];
+        }
+
+        return $headers;
+    }
+}
+</file>
+
+<file path="src/Imports/TranslationsImport.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Imports;
+
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Spatie\TranslationLoader\LanguageLine;
+
+class TranslationsImport implements ToCollection
+{
+    public function collection(Collection $rows)
+    {
+        unset($rows[0]);
+        $getLocals = config('filament-translations.locals');
+
+        foreach ($rows as $key => $row) {
+            $langs = config('filament-translations.locals');
+            $id = $row[0];
+            $getTranslation = LanguageLine::find($id);
+            $mergeTranslation = [];
+            $count = 1;
+            foreach ($langs as $langKey => $lang) {
+                if (isset($row[$count + 1]) && ! empty($row[$count + 1])) {
+                    $mergeTranslation[$langKey] = $row[$count + 1];
+                }
+                $count++;
+            }
+            $getTranslation->text = $mergeTranslation;
+            $getTranslation->save();
+        }
+    }
+}
+</file>
+
+<file path="tests/database/factories/TranslationFactory.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests\Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use TomatoPHP\FilamentTranslations\Tests\Models\Translation;
+
+class TranslationFactory extends Factory
+{
+    protected $model = Translation::class;
+
+    public function definition(): array
+    {
+        $config = config('filament-translations.locals');
+        $text = [];
+        foreach ($config as $key => $item) {
+            $text[$key] = $this->faker->sentence;
+        }
+
+        return [
+            'group' => $this->faker->word,
+            'key' => $this->faker->word,
+            'text' => $text,
+            'namespace' => '*',
+        ];
+    }
+}
+</file>
+
+<file path="tests/database/factories/UserFactory.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests\Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+use TomatoPHP\FilamentTranslations\Tests\Models\User;
+
+class UserFactory extends Factory
+{
+    protected $model = User::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+        ];
+    }
+}
+</file>
+
+<file path="tests/database/seeders/UserSeed.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests\Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use TomatoPHP\FilamentTranslations\Tests\Models\User;
+
+class UserSeed extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        User::factory()->create([
+            'name' => 'Fady Mondy',
+            'email' => 'info@3x1.io',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
+    }
+}
+</file>
+
+<file path="tests/src/Models/User.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests\Models;
+
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use TomatoPHP\FilamentTranslations\Tests\Database\Factories\UserFactory;
+
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+{
+    use HasFactory;
+    use Notifiable;
+
+    protected $guarded = [];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
+    }
+}
+</file>
+
+<file path="tests/src/AdminPanelProvider.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests;
+
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin;
+
+class AdminPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->login()
+            ->pages([
+                Pages\Dashboard::class,
+            ])
+            ->plugin(
+                FilamentTranslationsPlugin::make()
+                    ->allowCreate()
+                    ->allowClearTranslations()
+            )
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
+            ]);
+    }
+}
+</file>
+
+<file path="tests/src/DebugTest.php">
+<?php
+
+it('will not use debugging functions', function () {
+    expect(['dd', 'dump', 'ray'])->each->not->toBeUsed();
+});
+</file>
+
+<file path="tests/src/PluginTest.php">
+<?php
+
+use Filament\Facades\Filament;
+use TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin;
+
+it('registers plugin', function () {
+    $panel = Filament::getCurrentOrDefaultPanel();
+
+    $panel->plugins([
+        FilamentTranslationsPlugin::make(),
+    ]);
+
+    expect($panel->getPlugin('filament-translations'))
+        ->not()
+        ->toThrow(Exception::class);
+});
+
+it('can modify allow create new translations', function ($condition) {
+    $plugin = FilamentTranslationsPlugin::make()
+        ->allowCreate($condition);
+
+    expect($plugin->allowCreate)->toBe($condition);
+})->with([
+    false,
+    fn () => true,
+]);
+
+it('can modify allow clear all translations', function ($condition) {
+    $plugin = FilamentTranslationsPlugin::make()
+        ->allowClearTranslations($condition);
+
+    expect($plugin->allowClearTranslations)->toBe($condition);
+})->with([
+    false,
+    fn () => true,
+]);
+</file>
+
+<file path="tests/Pest.php">
+<?php
+
+use TomatoPHP\FilamentTranslations\Tests\TestCase;
+
+uses(TestCase::class)->in(__DIR__);
+</file>
+
+<file path=".gitignore">
+/.phpunit.cache
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+.DS_Store
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+/.zed
+</file>
+
+<file path=".php-cs-fixer.dist.php">
+<?php
+
+$finder = Symfony\Component\Finder\Finder::create()
+    ->notPath('bootstrap/*')
+    ->notPath('storage/*')
+    ->notPath('resources/view/mail/*')
+    ->in([
+        __DIR__ . '/src',
+        __DIR__ . '/tests',
+    ])
+    ->name('*.php')
+    ->notName('*.blade.php')
+    ->ignoreDotFiles(true)
+    ->ignoreVCS(true);
+
+return (new PhpCsFixer\Config())
+    ->setRules([
+        '@PSR2' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'ordered_imports' => ['sort_algorithm' => 'alpha'],
+        'no_unused_imports' => true,
+        'not_operator_with_successor_space' => true,
+        'trailing_comma_in_multiline' => true,
+        'phpdoc_scalar' => true,
+        'unary_operator_spaces' => true,
+        'binary_operator_spaces' => true,
+        'blank_line_before_statement' => [
+            'statements' => ['break', 'continue', 'declare', 'return', 'throw', 'try'],
+        ],
+        'phpdoc_single_line_var_spacing' => true,
+        'phpdoc_var_without_name' => true,
+        'method_argument_space' => [
+            'on_multiline' => 'ensure_fully_multiline',
+            'keep_multiple_spaces_after_comma' => true,
+        ]
+    ])
+    ->setFinder($finder);
+</file>
+
+<file path="CODE_OF_CONDUCT.md">
+# Contributor Covenant Code of Conduct
+
+## Our Pledge
+
+We as members, contributors, and leaders pledge to make participation in our
+community a harassment-free experience for everyone, regardless of age, body
+size, visible or invisible disability, ethnicity, sex characteristics, gender
+identity and expression, level of experience, education, socio-economic status,
+nationality, personal appearance, race, religion, or sexual identity
+and orientation.
+
+We pledge to act and interact in ways that contribute to an open, welcoming,
+diverse, inclusive, and healthy community.
+
+## Our Standards
+
+Examples of behavior that contributes to a positive environment for our
+community include:
+
+* Demonstrating empathy and kindness toward other people
+* Being respectful of differing opinions, viewpoints, and experiences
+* Giving and gracefully accepting constructive feedback
+* Accepting responsibility and apologizing to those affected by our mistakes,
+  and learning from the experience
+* Focusing on what is best not just for us as individuals, but for the
+  overall community
+
+Examples of unacceptable behavior include:
+
+* The use of sexualized language or imagery, and sexual attention or
+  advances of any kind
+* Trolling, insulting or derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or email
+  address, without their explicit permission
+* Other conduct which could reasonably be considered inappropriate in a
+  professional setting
+
+## Enforcement Responsibilities
+
+Community leaders are responsible for clarifying and enforcing our standards of
+acceptable behavior and will take appropriate and fair corrective action in
+response to any behavior that they deem inappropriate, threatening, offensive,
+or harmful.
+
+Community leaders have the right and responsibility to remove, edit, or reject
+comments, commits, code, wiki edits, issues, and other contributions that are
+not aligned to this Code of Conduct, and will communicate reasons for moderation
+decisions when appropriate.
+
+## Scope
+
+This Code of Conduct applies within all community spaces, and also applies when
+an individual is officially representing the community in public spaces.
+Examples of representing our community include using an official e-mail address,
+posting via an official social media account, or acting as an appointed
+representative at an online or offline event.
+
+## Enforcement
+
+Instances of abusive, harassing, or otherwise unacceptable behavior may be
+reported to the community leaders responsible for enforcement at
+.
+All complaints will be reviewed and investigated promptly and fairly.
+
+All community leaders are obligated to respect the privacy and security of the
+reporter of any incident.
+
+## Enforcement Guidelines
+
+Community leaders will follow these Community Impact Guidelines in determining
+the consequences for any action they deem in violation of this Code of Conduct:
+
+### 1. Correction
+
+**Community Impact**: Use of inappropriate language or other behavior deemed
+unprofessional or unwelcome in the community.
+
+**Consequence**: A private, written warning from community leaders, providing
+clarity around the nature of the violation and an explanation of why the
+behavior was inappropriate. A public apology may be requested.
+
+### 2. Warning
+
+**Community Impact**: A violation through a single incident or series
+of actions.
+
+**Consequence**: A warning with consequences for continued behavior. No
+interaction with the people involved, including unsolicited interaction with
+those enforcing the Code of Conduct, for a specified period of time. This
+includes avoiding interactions in community spaces as well as external channels
+like social media. Violating these terms may lead to a temporary or
+permanent ban.
+
+### 3. Temporary Ban
+
+**Community Impact**: A serious violation of community standards, including
+sustained inappropriate behavior.
+
+**Consequence**: A temporary ban from any sort of interaction or public
+communication with the community for a specified period of time. No public or
+private interaction with the people involved, including unsolicited interaction
+with those enforcing the Code of Conduct, is allowed during this period.
+Violating these terms may lead to a permanent ban.
+
+### 4. Permanent Ban
+
+**Community Impact**: Demonstrating a pattern of violation of community
+standards, including sustained inappropriate behavior,  harassment of an
+individual, or aggression toward or disparagement of classes of individuals.
+
+**Consequence**: A permanent ban from any sort of public interaction within
+the community.
+
+## Attribution
+
+This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+version 2.0, available at
+https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
+
+Community Impact Guidelines were inspired by [Mozilla's code of conduct
+enforcement ladder](https://github.com/mozilla/diversity).
+
+[homepage]: https://www.contributor-covenant.org
+
+For answers to common questions about this code of conduct, see the FAQ at
+https://www.contributor-covenant.org/faq. Translations are available at
+https://www.contributor-covenant.org/translations.
+</file>
+
+<file path="pint.json">
+{
+    "preset": "laravel",
+    "rules": {
+        "blank_line_before_statement": true,
+        "concat_space": {
+            "spacing": "one"
+        },
+        "method_argument_space": true,
+        "single_trait_insert_per_statement": true,
+        "types_spaces": {
+            "space": "single"
+        }
+    }
+}
+</file>
+
+<file path="SECURITY.md">
+# Security Policy
+
+If you discover any security related issues, please email info@3x1.io instead of using the issue tracker.
+</file>
+
+<file path="testbench.yaml">
+providers:
+  - BladeUI\Icons\BladeIconsServiceProvider
+  - BladeUI\Heroicons\BladeHeroiconsServiceProvider
+  - Filament\Actions\ActionsServiceProvider
+  - Filament\FilamentServiceProvider
+  - Filament\Forms\FormsServiceProvider
+  - Filament\Infolists\InfolistsServiceProvider
+  - Filament\Notifications\NotificationsServiceProvider
+  - Filament\Support\SupportServiceProvider
+  - Filament\Tables\TablesServiceProvider
+  - Filament\Widgets\WidgetsServiceProvider
+  - Filament\Schemas\SchemasServiceProvider
+  - RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider
+  - TomatoPHP\FilamentTranslationComponent\FilamentTranslationComponentServiceProvider
+  - TomatoPHP\FilamentTranslations\FilamentTranslationsServiceProvider
+  - TomatoPHP\FilamentTranslations\Tests\AdminPanelProvider
+workbench:
+  welcome: true
+  install: true
+  start: /
+  guard: testing
+  discovers:
+    web: true
+    api: false
+    commands: false
+    views: true
+</file>
+
+<file path="resources/lang/de/global.php">
+<?php
+
+return [
+    'created_at' => 'Erstellt am',
+    'updated_at' => 'Aktualisiert am',
+    'filter_by_group' => 'Filter nach Gruppe',
+    'filter_by_null_text' => 'Filter nach leerem Text',
+];
+</file>
+
+<file path="resources/lang/id/global.php">
+<?php
+
+return [
+    'created_at' => 'Dibuat pada',
+    'updated_at' => 'Diperbarui pada',
+    'filter_by_group' => 'Filter berdasarkan Grup',
+    'filter_by_null_text' => 'Filter berdasarkan Teks Kosong',
+];
+</file>
+
+<file path="resources/lang/nl/global.php">
+<?php
+
+return [
+    'created_at' => 'Aangemaakt op',
+    'updated_at' => 'Bijgewerkt op',
+    'filter_by_group' => 'Filteren op Groep',
+    'filter_by_null_text' => 'Filteren op Lege Tekst',
+];
+</file>
+
+<file path="src/Console/FilamentTranslationsInstall.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Console;
+
+use Illuminate\Console\Command;
+use TomatoPHP\ConsoleHelpers\Traits\RunCommand;
+
+class FilamentTranslationsInstall extends Command
+{
+    use RunCommand;
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $name = 'filament-translations:install';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'install package and publish assets';
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        $this->info('Publish Vendor Assets');
+        $this->artisanCommand(['migrate']);
+        $this->info('Scanning for translations');
+        $this->artisanCommand(['filament-translations:import']);
+        $this->info('Filament Translations Manager installed successfully.');
+    }
+}
+</file>
+
+<file path="src/Exports/CustomTranslationExport.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Exports;
+
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Spatie\TranslationLoader\LanguageLine;
+
+class CustomTranslationExport implements FromCollection, WithHeadings, WithMapping
+{
+    public function collection(): Collection
+    {
+        return LanguageLine::all();
+    }
+
+    public function map($row): array
+    {
+        $exportArray = [
+            $row->id,
+            $row->group,
+            $row->key,
+        ];
+
+        $locales = config('filament-translations.locals');
+        foreach ($locales as $key => $value) {
+            $exportArray[] = $row->text[$key] ?? null;
+        }
+
+        return $exportArray;
+    }
+
+    public function headings(): array
+    {
+        $headers = [
+            'id',
+            'group',
+            'key',
+        ];
+
+        $locales = config('filament-translations.locals');
+        foreach ($locales as $key => $value) {
+            $headers[] = $key;
+        }
+
+        return $headers;
+    }
+}
+</file>
+
+<file path="src/Imports/CustomTranslationImport.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Imports;
+
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Validators\Failure;
+use Spatie\TranslationLoader\LanguageLine;
+
+class CustomTranslationImport implements SkipsOnFailure, ToCollection, WithHeadingRow
+{
+    public function collection(Collection $collection): void
+    {
+        $locales = config('filament-translations.locals');
+
+        foreach ($collection as $languageLine) {
+            $translation = LanguageLine::firstOrNew(['id' => $languageLine['id']]);
+
+            $mergeTranslation = [];
+            foreach ($locales as $langKey => $lang) {
+                $mergeTranslation[$langKey] = $languageLine[$langKey];
+            }
+            $translation->text = $mergeTranslation;
+            $translation->save();
+        }
+    }
+
+    /**
+     * @param  Failure[]  $failures
+     */
+    public function onFailure(Failure ...$failures)
+    {
+        // Ignore errors and continue importing
+    }
+}
+</file>
+
+<file path="src/Services/ExcelImportExportService.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Services;
+
+use Filament\Notifications\Notification;
+use Illuminate\Http\UploadedFile;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use TomatoPHP\FilamentTranslations\Exports\TranslationsExport;
+use TomatoPHP\FilamentTranslations\Imports\TranslationsImport;
+
+class ExcelImportExportService
+{
+    public static function export(): BinaryFileResponse
+    {
+        $exportClass = config('filament-translations.path_to_custom_excel_export')
+            ?? TranslationsExport::class;
+
+        $fileName = date('Y-m-d-H-i-s') . '-translations.xlsx';
+
+        return Excel::download(new $exportClass, $fileName);
+    }
+
+    public static function import(UploadedFile | string $file): void
+    {
+        $importClass = config('filament-translations.path_to_custom_excel_import')
+            ?? TranslationsImport::class;
+
+        Excel::import(new $importClass, $file);
+
+        self::sendSuccessNotification();
+    }
+
+    private static function sendSuccessNotification(): void
+    {
+        Notification::make()
+            ->title(trans('filament-translations::translation.uploaded'))
+            ->success()
+            ->send();
+    }
+}
+</file>
+
+<file path="src/Services/Manager.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Services;
+
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
+use TomatoPHP\FilamentTranslations\Models\Translation;
+
+class Manager
+{
+    /** @var \Illuminate\Filesystem\Filesystem */
+    protected $files;
+
+    protected $locales;
+
+    public function __construct(Filesystem $files)
+    {
+        $this->files = $files;
+        $this->locales = [];
+    }
+
+    public function importTranslations($replace = false, $base = null, $import_group = false)
+    {
+        $counter = 0;
+        // allows for vendor lang files to be properly recorded through recursion.
+        $vendor = true;
+        if ($base === null) {
+            $base = lang_path();
+            $vendor = false;
+        }
+
+        foreach ($this->files->directories($base) as $langPath) {
+            $locale = basename($langPath);
+            // import langfiles for each vendor
+            if ($locale === 'vendor') {
+                foreach ($this->files->directories($langPath) as $vendor) {
+                    $counter += $this->importTranslations($replace, $vendor);
+                }
+
+                continue;
+            }
+            $vendorName = $this->files->name($this->files->dirname($langPath));
+
+            foreach ($this->files->allfiles($langPath) as $file) {
+                $info = pathinfo($file);
+                $group = $info['filename'];
+                if ($import_group) {
+                    if ($import_group !== $group) {
+                        continue;
+                    }
+                }
+
+                if (in_array($group, config('filament-translations.exclude_groups'))) {
+                    continue;
+                }
+                $subLangPath = str_replace($langPath . DIRECTORY_SEPARATOR, '', $info['dirname']);
+                $subLangPath = str_replace(DIRECTORY_SEPARATOR, '/', $subLangPath);
+                $langPath = str_replace(DIRECTORY_SEPARATOR, '/', $langPath);
+
+                if ($subLangPath != $langPath) {
+                    $group = $subLangPath . '/' . $group;
+                }
+
+                if (! $vendor) {
+                    $translations = \Lang::getLoader()->load($locale, $group);
+                } else {
+                    $translations = include $file;
+                    $group = 'vendor/' . $vendorName . '/' . $group;
+                }
+
+                if ($translations && is_array($translations)) {
+                    foreach (Arr::dot($translations) as $key => $value) {
+                        $importedTranslation = $this->importTranslation($key, $value, $locale, $group, $replace);
+                        $counter += $importedTranslation ? 1 : 0;
+                    }
+                }
+            }
+        }
+
+        return $counter;
+    }
+
+    public function importTranslation($key, $value, $locale, $group, $replace = false)
+    {
+
+        // process only string values
+        if (is_array($value)) {
+            return false;
+        }
+        $value = (string) $value;
+        $translation = Translation::firstOrNew([
+            'group' => $group,
+            'key' => $key,
+        ]);
+
+        $text = $translation->text;
+
+        if (empty($text[$locale])) {
+            $text[$locale] = $value;
+            $replace = true;
+        }
+
+        // Check if the database is different then the files
+        if ($text[$locale] !== $value) {
+            $text[$locale] = $value;
+            $replace = true;
+        }
+
+        if ($replace) {
+            $translation->text = $text;
+        }
+
+        $translation->save();
+
+        return true;
+    }
+}
+</file>
+
+<file path="phpunit.xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="vendor/autoload.php" colors="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+    <testsuites>
+        <testsuite name="Tests">
+            <directory suffix=".php">./tests/src/</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_KEY" value="base64:yk+bUVuZa1p86Dqjk9OjVK2R1pm6XHxC6xEKFq8utH0="/>
+        <env name="DB_CONNECTION" value="testing"/>
+    </php>
+</phpunit>
+</file>
+
+<file path=".github/workflows/dependabot-auto-merge.yml">
+name: dependabot-auto-merge
+on: pull_request_target
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2.4.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Auto-merge Dependabot PRs for semver-minor updates
+        if: ${{steps.metadata.outputs.update-type == 'version-update:semver-minor'}}
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Auto-merge Dependabot PRs for semver-patch updates
+        if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+</file>
+
+<file path="src/Console/ScanPath.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Console;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use TomatoPHP\ConsoleHelpers\Traits\RunCommand;
+use TomatoPHP\FilamentTranslations\Services\Scan;
+
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\text;
+
+class ScanPath extends Command
+{
+    use RunCommand;
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'filament-translations:scan {path?}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'scan selected path for translations and put it in json file';
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        $path = $this->argument('path');
+
+        if (! $path) {
+            text('Please enter path to scan', required: true);
+        }
+
+        $checkIfPathExists = File::exists($path);
+        while (! $checkIfPathExists) {
+            error('Path does not exist');
+            $path = text('Please enter path to scan', required: true);
+            $checkIfPathExists = File::exists($path);
+        }
+
+        info('Scanning path: ' . $path);
+
+        $scanner = app(Scan::class);
+        $scanner->addScannedPath($path);
+
+        [$trans, $__] = $scanner->getAllViewFilesWithTranslations();
+
+        // TODO: save translations to array file
+        //        $trans->each(function ($trans) {
+        //            list($group, $key) = explode('.', $trans, 2);
+        //            $namespaceAndGroup = explode('::', $group, 2);
+        //            if (count($namespaceAndGroup) === 1) {
+        //                $namespace = '*';
+        //                $group = $namespaceAndGroup[0];
+        //            } else {
+        //                list($namespace, $group) = $namespaceAndGroup;
+        //            }
+        //            $this->createOrUpdate($namespace, $group, $key);
+        //        });
+
+        /** @var Collection $__ */
+        $collectKeys = collect([]);
+        $__->each(function ($default) use ($collectKeys) {
+            if (((! str_contains($default, '{{')) && (! str_contains($default, '}}')) && (! str_contains($default, '::')) && (! str_contains($default, '.$')))) {
+                $collectKeys->put($default, $default);
+            }
+        });
+
+        $checkIfPathHasLang = File::exists($path . '/resources/lang');
+        if (! $checkIfPathHasLang) {
+            File::makeDirectory($path . '/resources/lang');
+        }
+
+        $jsonFileContent = json_encode($collectKeys->toArray(), JSON_PRETTY_PRINT);
+
+        File::put($path . '/resources/lang/en.json', $jsonFileContent);
+
+        info('Translations saved to: ' . $path . '/resources/lang/en.json');
+    }
+}
+</file>
+
+<file path="src/Models/Translation.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\TranslationLoader\LanguageLine;
+
+class Translation extends LanguageLine
+{
+    use HasFactory;
+    use SoftDeletes;
+
+    public array $translatable = ['text'];
+
+    /** @var array */
+    public $guarded = ['id'];
+
+    /** @var array */
+    protected $casts = ['text' => 'array'];
+
+    protected $table = 'language_lines';
+
+    protected $fillable = [
+        'group',
+        'key',
+        'text',
+        'namespace',
+    ];
+
+    public static function getTranslatableLocales(): array
+    {
+        return config('filament-translations.locals');
+    }
+
+    public function getTranslation(string $locale, ?string $group = null): string
+    {
+        if ($group === '*' && ! isset($this->text[$locale])) {
+            $fallback = config('app.fallback_locale');
+
+            return $this->text[$fallback] ?? $this->key;
+        }
+
+        return $this->text[$locale] ?? '';
+    }
+
+    public function setTranslation(string $locale, string $value): static
+    {
+        $this->text = array_merge($this->text ?? [], [$locale => $value]);
+
+        return $this;
+    }
+
+    protected function getTranslatedLocales(): array
+    {
+        return array_keys($this->text);
+    }
+}
+</file>
+
+<file path="tests/src/Models/Translation.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\TranslationLoader\LanguageLine;
+use TomatoPHP\FilamentTranslations\Tests\Database\Factories\TranslationFactory;
+
+class Translation extends LanguageLine
+{
+    use HasFactory;
+    use SoftDeletes;
+
+    /** @var array */
+    public $guarded = ['id'];
+
+    /** @var array */
+    protected $casts = ['text' => 'array'];
+
+    protected $table = 'language_lines';
+
+    protected $fillable = [
+        'group',
+        'key',
+        'text',
+        'namespace',
+    ];
+
+    public static function getTranslatableLocales(): array
+    {
+        return config('filament-translations.locals');
+    }
+
+    public function getTranslation(string $locale, ?string $group = null): string
+    {
+        if ($group === '*' && ! isset($this->text[$locale])) {
+            $fallback = config('app.fallback_locale');
+
+            return $this->text[$fallback] ?? $this->key;
+        }
+
+        return $this->text[$locale] ?? '';
+    }
+
+    public function setTranslation(string $locale, string $value): static
+    {
+        $this->text = array_merge($this->text ?? [], [$locale => $value]);
+
+        return $this;
+    }
+
+    protected function getTranslatedLocales(): array
+    {
+        return array_keys($this->text);
+    }
+
+    protected static function newFactory(): TranslationFactory
+    {
+        return TranslationFactory::new();
+    }
+}
+</file>
+
+<file path="module.json">
+{
+    "name": "FilamentTranslations",
+    "alias": "filament-translations",
+    "description": {
+        "ar": "قم بترجمة وإدارة النظام الخاص بك بسهولة",
+        "en": "Manage your translation with DB and cache",
+        "gr": "Manage your translation with DB and cache",
+        "sp": "Manage your translation with DB and cache"
+    },
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "TomatoPHP\\FilamentTranslations\\FilamentTranslationsServiceProvider"
+    ],
+    "files": [],
+    "title": {
+        "ar": "مدير الترجمات",
+        "en": "Translations Manager",
+        "gr": "Translations Manager",
+        "sp": "Translations Manager"
+    },
+    "color": "#cc1448",
+    "icon": "heroicon-c-shopping-bag",
+    "placeholder": "https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg",
+    "type": "plugin",
+    "version": "v2.0.4",
+    "github" : "https://github.com/tomatophp/filament-translations",
+    "docs" : "https://github.com/tomatophp/filament-translations"
+}
+</file>
+
+<file path=".github/workflows/tests.yml">
+name: "Tests"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.php'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - master
+    paths:
+      - '**.php'
+      - '.github/workflows/tests.yml'
+      - 'phpunit.xml.dist'
+      - 'composer.json'
+      - 'composer.lock'
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.4, 8.3, 8.2]
+        laravel: [12.*, 11.*]
+        stability: [prefer-stable]
+        include:
+          - laravel: 12.*
+            testbench: 10.*
+            carbon: 3.*
+            collision: 8.*
+          - laravel: 11.*
+            testbench: 9.*
+            carbon: 3.*
+            collision: 8.*
+        exclude:
+          - laravel: 11.*
+            php: 8.1
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+
+      - name: Install Dependencies
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Install Dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nesbot/carbon:${{ matrix.carbon }}" "nunomaduro/collision:${{ matrix.collision }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+          composer db
+
+      - name: Execute tests
+        run: vendor/bin/pest
+</file>
+
+<file path="resources/lang/de/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'Übersetzungen',
+        'list' => 'Übersetzungen',
+        'create' => 'Übersetzung erstellen',
+        'edit' => 'Übersetzung bearbeiten',
+    ],
+    'label' => 'Übersetzungen',
+    'single' => 'Übersetzung',
+    'group' => 'Einstellungen',
+    'gpt_scan' => 'GPT verwenden',
+    'gpt_scan_notifications_done' => 'GPT-Scan wurde abgeschlossen',
+    'gpt_scan_language' => 'Sprache',
+    'gpt_scan_notification_start' => 'GPT-Scan wurde gestartet',
+    'google_scan' => 'Google Übersetzer verwenden',
+    'google_scan_notifications_start' => 'Google-Übersetzer-Scan wurde gestartet',
+    'google_scan_notifications_done' => 'Google-Übersetzer-Scan wurde abgeschlossen',
+    'clear_notifications' => 'Übersetzungen wurden gelöscht',
+    'clear' => 'Alle Übersetzungen löschen',
+    'key' => 'Schlüssel',
+    'text' => 'Text',
+    'scan' => 'Nach neuen Sprachen suchen',
+    'namespace' => 'Namensraum',
+    'notification' => 'Sprache wurde erfolgreich geändert',
+    'loaded' => 'Übersetzungsliste wurde aktualisiert',
+    'uploaded' => 'Übersetzungen wurden erfolgreich hochgeladen',
+    'import' => 'Importieren',
+    'export' => 'Exportieren',
+    'import-file' => 'Wählen Sie die exportierte Datei nach der Übersetzung aus',
+    'menu' => 'Sprache ändern',
+    'modal' => [
+        'heading' => 'Aktuelle Sprache aktualisieren',
+        'button' => 'Sprache speichern',
+        'setting' => 'Einstellungen',
+        'select' => 'Sprache',
+    ],
+    'lang' => [
+        'ar' => 'Arabisch',
+        'en' => 'Englisch',
+        'pt_BR' => 'Portugiesisch (Brasilien)',
+        'my' => 'Burmesisch',
+        'de' => 'Deutsch',
+    ],
+];
+</file>
+
+<file path="src/Console/ImportCommand.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Console;
+
+use Illuminate\Console\Command;
+use TomatoPHP\FilamentTranslations\Services\SaveScan;
+
+use function Laravel\Prompts\spin;
+
+class ImportCommand extends Command
+{
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $signature = 'filament-translations:import';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Import translations from the language files';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        if (config('filament-translations.path_to_custom_import_command')) {
+            spin(
+                function () {
+                    $command = config('filament-translations.path_to_custom_import_command');
+                    $command = new $command;
+                    $command->handle();
+                },
+                'Fetching keys...'
+            );
+
+            $this->info('Done importing');
+
+            return;
+        }
+
+        spin(
+            function () {
+                $scan = new SaveScan;
+                $scan->save();
+            },
+            'Fetching keys...'
+        );
+
+        $this->info('Done importing');
+    }
+}
+</file>
+
+<file path="src/Services/Scan.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Services;
+
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
+use Symfony\Component\Finder\SplFileInfo;
+
+class Scan
+{
+    /**
+     * The Filesystem instance.
+     *
+     * @var Filesystem
+     */
+    private $disk;
+
+    /**
+     * The paths to directories where we look for localised strings to scan.
+     *
+     * @var array
+     */
+    private $scannedPaths;
+
+    /**
+     * Manager constructor.
+     */
+    public function __construct(Filesystem $disk)
+    {
+        $this->disk = $disk;
+        $this->scannedPaths = collect([]);
+    }
+
+    public function addScannedPath($path): void
+    {
+        $this->scannedPaths->push($path);
+    }
+
+    public function getAllViewFilesWithTranslations(): array
+    {
+        /*
+         * This pattern is derived from Barryvdh\TranslationManager by Barry vd. Heuvel <barryvdh@gmail.com>
+         *
+         * https://github.com/barryvdh/laravel-translation-manager/blob/master/src/Manager.php
+         */
+        $functions = [
+            'trans',
+            'trans_choice',
+            'Lang::get',
+            'Lang::choice',
+            'Lang::trans',
+            'Lang::transChoice',
+            '@lang',
+            '@choice',
+            '__',
+        ];
+
+        $patternA =
+            // See https://regex101.com/r/jS5fX0/4
+            '[^\w]' . // Must not start with any alphanum or _
+            '(?<!->)' . // Must not start with ->
+            '(' . implode('|', $functions) . ')' . // Must start with one of the functions
+            "\(" . // Match opening parentheses
+            "[\'\"]" . // Match " or '
+            '(' . // Start a new group to match:
+            '([a-zA-Z0-9_\/-]+::)?' .
+            '[a-zA-Z0-9_-]+' . // Must start with group
+            "([.][^\1)$]+)+" . // Be followed by one or more items/keys
+            ')' . // Close group
+            "[\'\"]" . // Closing quote
+            "[\),]";  // Close parentheses or new parameter
+
+        $patternB =
+            // See https://regex101.com/r/2EfItR/2
+            '[^\w]' . // Must not start with any alphanum or _
+            '(?<!->)' . // Must not start with ->
+            '(__|Lang::getFromJson)' . // Must start with one of the functions
+            '\(' . // Match opening parentheses
+
+            '[\"]' . // Match "
+            '(' . // Start a new group to match:
+            '[^"]+' . // Can have everything except "
+            //            '(?:[^"]|\\")+' . //Can have everything except " or can have escaped " like \", however it is not working as expected
+            ')' . // Close group
+            '[\"]' . // Closing quote
+
+            '[\)]';  // Close parentheses or new parameter
+
+        $patternC =
+            // See https://regex101.com/r/VaPQ7A/2
+            '[^\w]' . // Must not start with any alphanum or _
+            '(?<!->)' . // Must not start with ->
+            '(__|Lang::getFromJson)' . // Must start with one of the functions
+            '\(' . // Match opening parentheses
+
+            '[\']' . // Match '
+            '(' . // Start a new group to match:
+            "[^']+" . // Can have everything except '
+            //            "(?:[^']|\\')+" . //Can have everything except 'or can have escaped ' like \', however it is not working as expected
+            ')' . // Close group
+            '[\']' . // Closing quote
+
+            '[\)]';  // Close parentheses or new parameter
+
+        $trans = collect();
+        $__ = collect();
+        $excludedPaths = config('filament-translations.excludedPaths');
+
+        // FIXME maybe we can count how many times one translation is used and eventually display it to the user
+
+        /** @var SplFileInfo $file */
+        foreach ($this->disk->allFiles($this->scannedPaths->toArray()) as $file) {
+            $dir = dirname($file);
+            if (Str::startsWith($dir, $excludedPaths)) {
+                continue;
+            }
+
+            if (preg_match_all("/$patternA/siU", $file->getContents(), $matches)) {
+                $trans->push($matches[2]);
+            }
+
+            if (preg_match_all("/$patternB/siU", $file->getContents(), $matches)) {
+                $__->push($matches[2]);
+            }
+
+            if (preg_match_all("/$patternC/siU", $file->getContents(), $matches)) {
+                $__->push($matches[2]);
+            }
+        }
+
+        return [$trans->flatten()->unique(), $__->flatten()->unique()];
+    }
+}
+</file>
+
+<file path="src/Jobs/ScanJob.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Jobs\Job;
+use Illuminate\Queue\SerializesModels;
+use TomatoPHP\FilamentTranslations\Services\SaveScan;
+
+class ScanJob implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        if (config('filament-translations.path_to_custom_import_command')) {
+            $command = config('filament-translations.path_to_custom_import_command');
+            $command = new $command;
+            $command->handle();
+
+            return;
+        }
+
+        $saveScan = new SaveScan;
+        $saveScan->save();
+    }
+}
+</file>
+
+<file path="src/FilamentTranslationsServiceProvider.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations;
+
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\ServiceProvider;
+use TomatoPHP\FilamentTranslations\Console\FilamentTranslationsInstall;
+use TomatoPHP\FilamentTranslations\Console\ImportCommand;
+use TomatoPHP\FilamentTranslations\Console\ScanPath;
+use TomatoPHP\FilamentTranslations\Services\FilamentTranslationsServices;
+
+class FilamentTranslationsServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // Register ConfigTomatoPHP file
+        $this->mergeConfigFrom(__DIR__ . '/../config/filament-translations.php', 'filament-translations');
+
+        // Publish Config
+        $this->publishes([
+            __DIR__ . '/../config/filament-translations.php' => config_path('filament-translations.php'),
+        ], 'filament-translations-config');
+
+        // Register Migrations
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // Publish Migrations
+        $this->publishes([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], 'filament-translations-migrations');
+        // Register views
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament-translations');
+
+        // Publish Views
+        $this->publishes([
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/filament-translations'),
+        ], 'filament-translations-views');
+
+        // Register Langs
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament-translations');
+
+        // Publish Lang
+        $this->publishes([
+            __DIR__ . '/../resources/lang' => base_path('lang/vendor/filament-translations'),
+        ], 'filament-translations-lang');
+
+        // Register Routes
+        //        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+
+        $this->commands([
+            FilamentTranslationsInstall::class,
+            ImportCommand::class,
+            ScanPath::class,
+        ]);
+
+    }
+
+    public function boot(): void
+    {
+        Config::set('filament-translation-component.languages', Config::get('filament-translations.locals'));
+
+        $this->app->singleton('filament-translations', function () {
+            return new FilamentTranslationsServices;
+        });
+
+    }
+}
+</file>
+
+<file path="tests/src/TestCase.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests;
+
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
+use Filament\Actions\ActionsServiceProvider;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ImportAction;
+use Filament\Facades\Filament;
+use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
+use Filament\Infolists\InfolistsServiceProvider;
+use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Panel;
+use Filament\Schemas\SchemasServiceProvider;
+use Filament\Support\SupportServiceProvider;
+use Filament\Tables\TablesServiceProvider;
+use Filament\Widgets\WidgetsServiceProvider;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\Attributes\WithEnv;
+use Orchestra\Testbench\Concerns\WithWorkbench;
+use Orchestra\Testbench\TestCase as BaseTestCase;
+use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
+use TomatoPHP\FilamentDeveloperGate\Actions\DeveloperLogoutAction;
+use TomatoPHP\FilamentTranslationComponent\FilamentTranslationComponentServiceProvider;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\ClearAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\ScanAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ManageTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\TranslationHeaderActions;
+use TomatoPHP\FilamentTranslations\FilamentTranslationsServiceProvider;
+use TomatoPHP\FilamentTranslations\Tests\Models\User;
+
+#[WithEnv('DB_CONNECTION', 'testing')]
+abstract class TestCase extends BaseTestCase
+{
+    use LazilyRefreshDatabase;
+    use WithWorkbench;
+
+    public ?Panel $panel;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->panel = Filament::getCurrentOrDefaultPanel();
+
+        if (config('filament-translations.import_enabled')) {
+            TranslationHeaderActions::register(ImportAction::make());
+        }
+
+        if (config('filament-translations.export_enabled')) {
+            TranslationHeaderActions::register(ExportAction::make());
+        }
+
+        if (config('filament-translations.scan_enabled')) {
+            FilamentTranslations::register(ScanAction::make(), ListTranslations::class);
+            FilamentTranslations::register(ScanAction::make(), ManageTranslations::class);
+        }
+
+        if (filament('filament-translations')->allowClearTranslations) {
+            FilamentTranslations::register(ClearAction::make(), ListTranslations::class);
+            FilamentTranslations::register(ClearAction::make(), ManageTranslations::class);
+        }
+
+        if (filament('filament-translations')->allowCreate) {
+            FilamentTranslations::register(CreateAction::make(), ListTranslations::class);
+            FilamentTranslations::register(CreateAction::make(), ManageTranslations::class);
+        }
+
+        if (config('filament-translations.use_developer_gate')) {
+            FilamentTranslations::register(DeveloperLogoutAction::make(), ListTranslations::class);
+            FilamentTranslations::register(DeveloperLogoutAction::make(), ManageTranslations::class);
+        }
+    }
+
+    protected function defineDatabaseMigrations(): void
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+    }
+
+    protected function getPackageProviders($app): array
+    {
+        $providers = [
+            ActionsServiceProvider::class,
+            BladeCaptureDirectiveServiceProvider::class,
+            BladeHeroiconsServiceProvider::class,
+            BladeIconsServiceProvider::class,
+            FilamentServiceProvider::class,
+            FormsServiceProvider::class,
+            SchemasServiceProvider::class,
+            InfolistsServiceProvider::class,
+            LivewireServiceProvider::class,
+            NotificationsServiceProvider::class,
+            SupportServiceProvider::class,
+            TablesServiceProvider::class,
+            WidgetsServiceProvider::class,
+            FilamentTranslationComponentServiceProvider::class,
+            FilamentTranslationsServiceProvider::class,
+            AdminPanelProvider::class,
+        ];
+
+        sort($providers);
+
+        return $providers;
+    }
+
+    public function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('filament-translations.use_queue_on_scan', false);
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('auth.guards.testing.driver', 'session');
+        $app['config']->set('auth.guards.testing.provider', 'testing');
+        $app['config']->set('auth.providers.testing.driver', 'eloquent');
+        $app['config']->set('auth.providers.testing.model', User::class);
+        $app['config']->set('filament-translations.scan_enabled', true);
+        $app['config']->set('filament-translations.scan_enabled', true);
+
+        $app['config']->set('filament-translations.paths', [
+            __DIR__ . '/../../vendor/orchestra/testbench-core/laravel',
+        ]);
+
+        $app['config']->set('view.paths', [
+            ...$app['config']->get('view.paths'),
+            __DIR__ . '/../resources/views',
+        ]);
+
+        $app['config']->set('filament-translations.translation_resource', \TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource::class);
+    }
+}
+</file>
+
+<file path="resources/lang/es/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'Traducciones',
+        'list' => 'Traducciones',
+        'create' => 'Crear Traducción',
+        'edit' => 'Editar Traducción',
+    ],
+    'label' => 'Traducciones',
+    'single' => 'Traducción',
+    'group' => 'Configuraciones',
+    'language' => 'Idioma',
+    'gpt_scan' => 'Usar GPT',
+    'gpt_scan_notification_start' => 'El escaneo GPT ha comenzado',
+    'gpt_scan_notifications_done' => 'El escaneo GPT se ha completado',
+    'google_scan' => 'Usar Google Translate',
+    'google_scan_notifications_start' => 'El escaneo de Google Translate ha comenzado',
+    'google_scan_notifications_done' => 'El escaneo de Google Translate se ha completado',
+    'clear_notifications' => 'Las traducciones han sido borradas',
+    'clear' => 'Borrar todas las traducciones',
+    'key' => 'Clave',
+    'text' => 'Texto',
+    'scan' => 'Buscar nuevos idiomas',
+    'namespace' => 'Espacio de nombres',
+    'notification' => 'El idioma ha sido cambiado exitosamente',
+    'loaded' => 'La lista de traducciones se ha actualizado',
+    'uploaded' => 'Las traducciones se han subido con éxito',
+    'import' => 'Importar',
+    'export' => 'Exportar',
+    'import-file' => 'Seleccione el archivo exportado después de traducirlo',
+    'menu' => 'Cambiar idioma',
+    'modal' => [
+        'heading' => 'Actualizar el idioma actual',
+        'button' => 'Guardar, idioma',
+        'setting' => 'Configuraciones',
+        'select' => 'Idioma',
+    ],
+    'lang' => [
+        'ar' => 'Árabe',
+        'en' => 'Inglés',
+        'pt_BR' => 'Portugués (Brasil)',
+        'my' => 'Birmano',
+        'de' => 'Alemán',
+    ],
+];
+</file>
+
+<file path="resources/lang/en/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'Translations',
+        'list' => 'Translations',
+        'create' => 'Create Translation',
+        'edit' => 'Edit Translation',
+    ],
+    'label' => 'Translations',
+    'single' => 'Translation',
+    'group' => 'Settings',
+    'gpt_scan_language' => 'Language',
+    'gpt_scan' => 'Use GPT',
+    'gpt_scan_notification_start' => 'GPT Scan has been started',
+    'gpt_scan_notifications_done' => 'GPT Scan has been completed',
+    'google_scan' => 'Use Google Translate',
+    'google_scan_notifications_start' => 'Google-Translate scan has been started',
+    'google_scan_notifications_done' => 'Google-Translate scan has been completed',
+    'clear_notifications' => 'Translations has been cleared',
+    'clear' => 'Clear All Translations',
+    'key' => 'Key',
+    'text' => 'Text',
+    'scan' => 'Scan For New Languages',
+    'namespace' => 'Namespace',
+    'notification' => 'Language has been changed successfully',
+    'loaded' => 'Translations list has been updated',
+    'uploaded' => 'Translations has been uploaded successfully',
+    'import' => 'Import',
+    'export' => 'Export',
+    'import-file' => 'Select Exported File After Translate It',
+    'menu' => 'Change Language',
+    'modal' => [
+        'heading' => 'Update current language',
+        'button' => 'Save, language',
+        'setting' => 'Settings',
+        'select' => 'Language',
+    ],
+    'lang' => [
+        'ar' => 'Arabic',
+        'en' => 'English',
+        'pt_BR' => 'Português (Brasil)',
+        'my' => 'Burmese',
+        'de' => 'German',
+    ],
+];
+</file>
+
+<file path="resources/lang/my/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'ဘာသာပြန်ဆိုမှုများ',
+        'list' => 'ဘာသာပြန်ဆိုမှုများ',
+        'create' => 'ဘာသာပြန်ဆိုမှု အသစ် ဖန်တီးပါ',
+        'edit' => 'ဘာသာပြန်ဆိုမှု တည်းဖြတ်ပါ',
+    ],
+    'label' => 'ဘာသာပြန်ဆိုမှုများ',
+    'single' => 'ဘာသာပြန်ဆိုမှု',
+    'group' => 'ဆက်တင်များ',
+    'language' => 'ဘာသာစကား',
+    'gpt_scan' => 'GPT အသုံးပြုပါ',
+    'gpt_scan_notification_start' => 'GPT စစ်ဆေးမှု စတင်ပြီးပါပြီ',
+    'gpt_scan_notifications_done' => 'GPT စစ်ဆေးမှု ပြီးစီးပြီးပါပြီ',
+    'google_scan' => 'Google ဘာသာပြန်ကို အသုံးပြုပါ',
+    'google_scan_notifications_start' => 'Google ဘာသာပြန် စစ်ဆေးမှု စတင်လိုက်ပါပြီ',
+    'google_scan_notifications_done' => 'Google ဘာသာပြန် စစ်ဆေးမှု ပြီးစီးပါပြီ',
+    'clear_notifications' => 'ဘာသာပြန်ဆိုမှုများကို ရှင်းလင်းပြီးပါပြီ',
+    'clear' => 'အားလုံး ရှင်းလင်းပါ',
+    'key' => 'Key',
+    'text' => 'စာသား',
+    'scan' => 'ဘာသာစကားအသစ်များအတွက် စစ်ဆေးပါ',
+    'namespace' => 'Namespace',
+    'notification' => 'ဘာသာစကား အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ',
+    'loaded' => 'ဘာသာပြန်ဆိုမှု စာရင်းကို အပ်ဒိတ်လုပ်ပြီးပါပြီ',
+    'uploaded' => 'ဘာသာပြန်ဆိုမှုများ အောင်မြင်စွာ တင်ပြီးပါပြီ',
+    'import' => 'သွင်းယူပါ',
+    'export' => 'တင်ပို့ပါ',
+    'import-file' => 'ဘာသာပြန်ပြီးသော ဖိုင်ကို ရွေးပါ',
+    'menu' => 'ဘာသာစကား ပြောင်းပါ',
+    'modal' => [
+        'heading' => 'လက်ရှိ ဘာသာစကားကို အပ်ဒိတ်လုပ်ပါ',
+        'button' => 'ဘာသာစကား သိမ်းဆည်းပါ',
+        'setting' => 'ဆက်တင်များ',
+        'select' => 'ဘာသာစကား',
+    ],
+    'lang' => [
+        'ar' => 'အာရဗီ',
+        'en' => 'အင်္ဂလိပ်',
+        'pt_BR' => 'ပို်တူဂီ (ဘရာဇီး)',
+        'my' => 'ဗမာ',
+        'de' => 'ဂျာမန်',
+    ],
+];
+</file>
+
+<file path="resources/lang/nl/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'Vertalingen',
+        'list' => 'Vertalingen',
+        'create' => 'Vertaling aanmaken',
+        'edit' => 'Vertaling bewerken',
+    ],
+    'label' => 'Vertalingen',
+    'single' => 'Vertaling',
+    'group' => 'Instellingen',
+    'language' => 'Taal',
+    'gpt_scan' => 'Gebruik GPT',
+    'gpt_scan_notification_start' => 'GPT-scan is gestart',
+    'gpt_scan_notifications_done' => 'GPT-scan is voltooid',
+    'google_scan' => 'Gebruik Google Translate',
+    'google_scan_notifications_start' => 'Google Translate-scan is gestart',
+    'google_scan_notifications_done' => 'Google Translate-scan is voltooid',
+    'clear_notifications' => 'Vertalingen zijn gewist',
+    'clear' => 'Wis alle vertalingen',
+    'key' => 'Sleutel',
+    'text' => 'Tekst',
+    'scan' => 'Scan voor nieuwe talen',
+    'namespace' => 'Namespace',
+    'notification' => 'Taal is succesvol gewijzigd',
+    'loaded' => 'Vertalingenlijst is bijgewerkt',
+    'uploaded' => 'Vertalingen zijn succesvol geüpload',
+    'import' => 'Importeren',
+    'export' => 'Exporteren',
+    'import-file' => 'Selecteer geëxporteerd bestand na vertaling',
+    'menu' => 'Wijzig taal',
+    'modal' => [
+        'heading' => 'Huidige taal bijwerken',
+        'button' => 'Taal opslaan',
+        'setting' => 'Instellingen',
+        'select' => 'Taal',
+    ],
+    'lang' => [
+        'ar' => 'Arabisch',
+        'en' => 'Engels',
+        'pt_BR' => 'Portugees (Brazilië)',
+        'my' => 'Birmaans',
+        'de' => 'Duits',
+    ],
+];
+</file>
+
+<file path="resources/lang/pt_BR/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'Traduções',
+        'list' => 'Traduções',
+        'create' => 'Criar Tradução',
+        'edit' => 'Editar Tradução',
+    ],
+    'label' => 'Traduções',
+    'single' => 'Tradução',
+    'group' => 'Configurações',
+    'language' => 'Idioma',
+    'gpt_scan' => 'Usar GPT',
+    'gpt_scan_notification_start' => 'A verificação GPT foi iniciada',
+    'gpt_scan_notifications_done' => 'A verificação GPT foi concluída',
+    'google_scan' => 'Usar Google Tradutor',
+    'google_scan_notifications_start' => 'A verificação do Google Tradutor foi iniciada',
+    'google_scan_notifications_done' => 'A verificação do Google Tradutor foi concluída',
+    'clear_notifications' => 'As traduções foram limpas',
+    'clear' => 'Limpar todas as traduções',
+    'key' => 'Chave',
+    'text' => 'Texto',
+    'scan' => 'Verificar novos idiomas',
+    'namespace' => 'Namespace',
+    'notification' => 'Idioma alterado com sucesso',
+    'loaded' => 'Lista de traduções foi atualizada',
+    'uploaded' => 'Traduções foram carregadas com sucesso',
+    'import' => 'Importar',
+    'export' => 'Exportar',
+    'import-file' => 'Selecione o arquivo exportado após traduzi-lo',
+    'menu' => 'Alterar Idioma',
+    'modal' => [
+        'heading' => 'Atualizar idioma atual',
+        'button' => 'Salvar, idioma',
+        'setting' => 'Configurações',
+        'select' => 'Idioma',
+    ],
+    'lang' => [
+        'ar' => 'Árabe',
+        'en' => 'Inglês',
+        'pt_BR' => 'Português (Brasil)',
+        'my' => 'Birmanês',
+        'de' => 'Alemão',
+    ],
+];
+</file>
+
+<file path="resources/lang/ar/translation.php">
+<?php
+
+return [
+    'title' => [
+        'home' => 'الترجمات',
+        'list' => 'الترجمات',
+        'create' => 'إنشاء ترجمة',
+        'edit' => 'تعديل ترجمة',
+    ],
+    'label' => 'الترجمات',
+    'single' => 'ترجمة',
+    'group' => 'الإعدادات',
+    'key' => 'المفتاح',
+    'text' => 'النص',
+    'gpt_scan' => 'استخدام GPT',
+    'gpt_scan_language' => 'اللغة',
+    'gpt_scan_notification_start' => 'تم بدء استخدام GPT',
+    'gpt_scan_notifications_done' => 'تم الانتهاء من استخدام GPT',
+    'google_scan' => 'Google استخدام ترجمة',
+    'google_scan_notification_start' => 'تم بدء استخدام Google-Translate',
+    'google_scan_notifications_done' => 'Google-Translate تم الانتهاء من استخدام',
+    'clear_notifications' => 'تم مسح الترجمات',
+    'clear' => 'مسح جميع الترجمات',
+    'scan' => 'الحصول علي الترجمات',
+    'namespace' => 'النطاق',
+    'notification' => 'تم تغيير اللغة بنجاح',
+    'loaded' => 'تم تحديث قائمة الترجمات بنجاح',
+    'uploaded' => 'تم استيراد الترجمات بنجاح',
+    'menu' => 'تغيير اللغة',
+    'import' => 'استيراد',
+    'export' => 'تصدير',
+    'import-file' => 'برجاء اختيار ملف الاكسيل المصدر بعد ترجمته',
+    'modal' => [
+        'heading' => 'تحديث اللغة الحالية',
+        'button' => 'حفظ اللغة',
+        'setting' => 'الإعدادات',
+        'select' => 'اللغة',
+    ],
+    'lang' => [
+        'ar' => 'العربية',
+        'en' => 'الانجليزية',
+        'pt_BR' => 'البرتغالية - البرازيل',
+        'my' => 'البورمية',
+        'nl' => 'الهولندية',
+        'de' => 'الألمانية',
+    ],
+];
+</file>
+
+<file path="src/Services/SaveScan.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Services;
+
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Lang;
+use TomatoPHP\FilamentTranslations\Models\Translation;
+
+class SaveScan
+{
+    private $paths;
+
+    public function __construct()
+    {
+        $this->paths = config('filament-translations.paths');
+    }
+
+    public function save()
+    {
+        $scanner = app(Scan::class);
+        collect($this->paths)->filter(function ($path) {
+            return File::exists($path);
+        })->each(function ($path) use ($scanner) {
+            $scanner->addScannedPath($path);
+        });
+
+        [$trans, $__] = $scanner->getAllViewFilesWithTranslations();
+
+        /** @var Collection $trans */
+        /** @var Collection $__ */
+        DB::transaction(function () use ($trans, $__) {
+            Translation::query()
+                ->whereNull('deleted_at')
+                ->update([
+                    'deleted_at' => Carbon::now(),
+                ]);
+
+            $trans->each(function ($trans) {
+                [$group, $key] = explode('.', $trans, 2);
+                $namespaceAndGroup = explode('::', $group, 2);
+                if (count($namespaceAndGroup) === 1) {
+                    $namespace = '*';
+                    $group = $namespaceAndGroup[0];
+                } else {
+                    [$namespace, $group] = $namespaceAndGroup;
+                }
+                $this->createOrUpdate($namespace, $group, $key, $trans);
+            });
+
+            $__->each(function ($default) {
+                $this->createOrUpdate('*', '*', $default, $default);
+            });
+        });
+    }
+
+    protected function createOrUpdate($namespace, $group, $key, $mainKey = null): void
+    {
+        /** @var Translation $translation */
+        $translation = Translation::withTrashed()
+            ->where('namespace', $namespace)
+            ->where('group', $group)
+            ->where('key', $key)
+            ->first();
+
+        $defaultLocale = config('app.locale');
+
+        if ($translation) {
+            if (! $this->isCurrentTransForTranslationArray($translation, $defaultLocale)) {
+                $translation->restore();
+            }
+        } else {
+            $locals = config('filament-translations.locals');
+            $text = [];
+            foreach ($locals as $locale => $lang) {
+                $translation = Lang::get(key: $key, locale: $locale, fallback: str($key)->replace('.', ' ')->replace('_', ' ')->title()->toString());
+                $text[$locale] = ! is_array($translation) ? $translation : '';
+            }
+            $translation = Translation::query()->create([
+                'namespace' => $namespace,
+                'group' => $group,
+                'key' => $key,
+                'text' => $text,
+            ]);
+
+            if (! $this->isCurrentTransForTranslationArray($translation, $defaultLocale)) {
+                $translation->save();
+            }
+        }
+    }
+
+    private function isCurrentTransForTranslationArray(Translation $translation, $locale): bool
+    {
+        if ($translation->group === '*') {
+            return is_array(__($translation->key, [], $locale));
+        }
+
+        if ($translation->namespace === '*') {
+            return is_array(trans($translation->group . '.' . $translation->key, [], $locale));
+        }
+
+        return is_array(trans($translation->namespace . '::' . $translation->group . '.' . $translation->key, [], $locale));
+    }
+}
+</file>
+
+<file path="tests/src/TranslationResourceTest.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations\Tests;
+
+use Filament\Facades\Filament;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
+use TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin;
+use TomatoPHP\FilamentTranslations\Tests\Models\Translation;
+use TomatoPHP\FilamentTranslations\Tests\Models\User;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertNotEquals;
+
+beforeEach(function () {
+    actingAs(User::factory()->create());
+
+    $this->panel = Filament::getCurrentOrDefaultPanel();
+    $this->panel->plugin(
+        FilamentTranslationsPlugin::make()
+            ->allowCreate()
+            ->allowClearTranslations()
+    );
+});
+
+it('can render translation resource', function () {
+    get(TranslationResource::getUrl())->assertSuccessful();
+});
+
+it('can list translations', function () {
+    Translation::query()->delete();
+    $translations = Translation::factory()->count(10)->create();
+
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
+        ->loadTable()
+        ->assertCanSeeTableRecords($translations)
+        ->assertCountTableRecords(10);
+});
+
+it('can render user key/text column in table', function () {
+    Translation::factory()->count(10)->create();
+
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
+        ->loadTable()
+        ->assertCanRenderTableColumn('key')
+        ->assertCanRenderTableColumn('text');
+});
+
+it('can render translations list page', function () {
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)->assertSuccessful();
+});
+
+it('can render translation create page', function () {
+    if (filament('filament-translations')->allowCreate) {
+        if (config('filament-translations.modal')) {
+            livewire(Translations\Pages\ManageTranslations::class)
+                ->mountAction('create')
+                ->assertSuccessful();
+        } else {
+
+            get(TranslationResource::getUrl('create'))->assertSuccessful();
+
+        }
+    }
+});
+
+it('can render translation scan button', function () {
+    if (config('filament-translations.modal')) {
+        livewire(Translations\Pages\ManageTranslations::class)
+            ->mountAction('scan')
+            ->assertSuccessful();
+    } else {
+        livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
+            ->mountAction('scan')
+            ->assertSuccessful();
+    }
+});
+
+it('can run scan', function () {
+    Translation::query()->delete();
+
+    if (config('filament-translations.modal')) {
+        livewire(Translations\Pages\ManageTranslations::class)
+            ->callAction('scan')
+            ->assertSuccessful();
+    } else {
+        livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
+            ->callAction('scan')
+            ->assertSuccessful();
+    }
+
+    assertNotEquals(Translation::query()->count(), 0);
+});
+
+it('can render translation clear button', function () {
+    Translation::factory()->count(10)->create();
+
+    if (filament('filament-translations')->allowClearTranslations) {
+        if (config('filament-translations.modal')) {
+            livewire(Translations\Pages\ManageTranslations::class)
+                ->callAction('clear')
+                ->assertSuccessful();
+        } else {
+            livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
+                ->callAction('clear')
+                ->assertSuccessful();
+        }
+
+        assertEquals(Translation::query()->count(), 0);
+    }
+});
+
+it('can perform clear translation clear', function () {
+    if (filament('filament-translations')->allowClearTranslations) {
+        if (config('filament-translations.modal')) {
+            livewire(Translations\Pages\ManageTranslations::class)
+                ->mountAction('clear')
+                ->assertSuccessful();
+        } else {
+            livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
+                ->mountAction('clear')
+                ->assertSuccessful();
+        }
+    }
+});
+
+it('can create new translation', function () {
+    $newData = Translation::factory()->make();
+
+    livewire(Translations\Pages\CreateTranslation::class)
+        ->fillForm([
+            'group' => $newData->group,
+            'key' => $newData->key,
+            'text' => $newData->text,
+            'namespace' => $newData->namespace,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(Translation::class, [
+        'group' => $newData->group,
+        'key' => $newData->key,
+    ]);
+});
+
+it('can validate translation input', function () {
+    livewire(Translations\Pages\CreateTranslation::class)
+        ->fillForm([
+            'group' => null,
+            'key' => null,
+        ])
+        ->call('create')
+        ->assertHasFormErrors([
+            'group' => 'required',
+            'key' => 'required',
+        ]);
+});
+
+it('can render translation edit page', function () {
+    if (config('filament-translations.modal')) {
+        livewire(Translations\Pages\ManageTranslations::class, [
+            'record' => Translation::factory()->create(),
+        ])
+            ->mountAction('edit')
+            ->assertSuccessful();
+    } else {
+
+        get(TranslationResource::getUrl('edit', [
+            'record' => Translation::factory()->create(),
+        ]))->assertSuccessful();
+
+    }
+});
+
+it('can retrieve translation data', function () {
+    $translation = Translation::factory()->create();
+
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\EditTranslation::class, [
+        'record' => $translation->getRouteKey(),
+    ])
+        ->assertFormSet([
+            'group' => $translation->group,
+            'key' => $translation->key,
+            'text' => $translation->text,
+        ]);
+});
+
+it('can validate edit translation input', function () {
+    $translation = Translation::factory()->create();
+
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\EditTranslation::class, [
+        'record' => $translation->getRouteKey(),
+    ])
+        ->fillForm([
+            'group' => null,
+            'key' => null,
+        ])
+        ->call('save')
+        ->assertHasFormErrors([
+            'group' => 'required',
+            'key' => 'required',
+        ]);
+});
+
+it('can save translation data', function () {
+    $translation = Translation::factory()->create();
+    $newData = Translation::factory()->make();
+
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\EditTranslation::class, [
+        'record' => $translation->getRouteKey(),
+    ])
+
+        ->fillForm([
+            'text' => $newData->text,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($translation->refresh())
+        ->text->toBe($newData->text);
+});
+</file>
+
+<file path="config/filament-translations.php">
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Paths
+    |--------------------------------------------------------------------------
+    |
+    | add path that will be show to the scaner to catch lanuages tags
+    |
+    */
+    'paths' => [
+        app_path(),
+        resource_path('views'),
+        base_path('vendor'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Excluded paths
+    |--------------------------------------------------------------------------
+    |
+    | Put here any folder that you want to exclude that is inside of paths
+    |
+    */
+
+    'excludedPaths' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locals
+    |--------------------------------------------------------------------------
+    |
+    | add the locals that will be show on the languages selector
+    |
+    */
+    'locals' => [
+        'en' => [
+            'label' => 'English',
+            'flag' => 'us',
+        ],
+        'ar' => [
+            'label' => 'Arabic',
+            'flag' => 'eg',
+        ],
+        'fr' => [
+            'label' => 'French',
+            'flag' => 'fr',
+        ],
+        'pt_BR' => [
+            'label' => 'Português (Brasil)',
+            'flag' => 'br',
+        ],
+        'my' => [
+            'label' => 'Burmese',
+            'flag' => 'mm',
+        ],
+        'id' => [
+            'label' => 'Indonesia',
+            'flag' => 'id',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Modal
+    |--------------------------------------------------------------------------
+    |
+    | use simple modal resource for the translation resource
+    |
+    */
+    'modal' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    |
+    | Add groups that should be excluded in translation import from files to database
+    |
+    */
+    'exclude_groups' => [],
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Register the navigation for the translations.
+     |
+     */
+    'register_navigation' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Use Queue to scan the translations.
+     |
+     */
+    'use_queue_on_scan' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom import command.
+     |
+     */
+    'path_to_custom_import_command' => null,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Show buttons in Translation resource.
+     |
+     */
+    'scan_enabled' => true,
+    'export_enabled' => true,
+    'import_enabled' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Translation resource.
+     |
+     */
+    'translation_resource' => \TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource::class,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom Excel export.
+     |
+     */
+    'path_to_custom_excel_export' => null,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Custom Excel import.
+     |
+     */
+    'path_to_custom_excel_import' => null,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Use Developer Gate.
+     |
+     */
+    'use_developer_gate' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | When use developer gate, hide the navigation.
+     |
+     */
+    'hide_navigation_when_developer_gate' => false,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Navigation group.
+     | it can be a translation key if it's has just . on it.
+     |
+     */
+    'navigation_group' => 'Settings',
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Navigation icon.
+     |
+     */
+    'navigation_icon' => 'heroicon-m-language',
+];
+</file>
+
+<file path="src/FilamentTranslationsPlugin.php">
+<?php
+
+namespace TomatoPHP\FilamentTranslations;
+
+use Filament\Contracts\Plugin;
+use Filament\Panel;
+use TomatoPHP\FilamentDeveloperGate\Actions\DeveloperLogoutAction;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\ClearAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\CreateAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\ScanAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ManageTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\HeaderActions\ExportAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\HeaderActions\ImportAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\TranslationHeaderActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
+
+class FilamentTranslationsPlugin implements Plugin
+{
+    public bool $allowClearTranslations = false;
+
+    public bool $allowCreate = false;
+
+    public function getId(): string
+    {
+        return 'filament-translations';
+    }
+
+    public function register(Panel $panel): void
+    {
+        $panel->resources([
+            config('filament-translations.translation_resource') ?: TranslationResource::class,
+        ]);
+    }
+
+    public function allowClearTranslations(bool $allowClearTranslations = true): self
+    {
+        $this->allowClearTranslations = $allowClearTranslations;
+
+        return $this;
+    }
+
+    public function allowCreate(bool $allowCreate = true): self
+    {
+        $this->allowCreate = $allowCreate;
+
+        return $this;
+    }
+
+    public function boot(Panel $panel): void
+    {
+
+        if (config('filament-translations.import_enabled')) {
+            TranslationHeaderActions::register(ImportAction::make());
+        }
+
+        if (config('filament-translations.export_enabled')) {
+            TranslationHeaderActions::register(ExportAction::make());
+        }
+
+        if (config('filament-translations.scan_enabled')) {
+            FilamentTranslations::register(ScanAction::make(), ListTranslations::class);
+            FilamentTranslations::register(ScanAction::make(), ManageTranslations::class);
+        }
+
+        if (filament('filament-translations')->allowClearTranslations) {
+            FilamentTranslations::register(ClearAction::make(), ListTranslations::class);
+            FilamentTranslations::register(ClearAction::make(), ManageTranslations::class);
+        }
+
+        if (filament('filament-translations')->allowCreate) {
+            FilamentTranslations::register(CreateAction::make(), ListTranslations::class);
+            FilamentTranslations::register(CreateAction::make(), ManageTranslations::class);
+        }
+
+        if (config('filament-translations.use_developer_gate')) {
+            FilamentTranslations::register(DeveloperLogoutAction::make(), ListTranslations::class);
+            FilamentTranslations::register(DeveloperLogoutAction::make(), ManageTranslations::class);
+        }
+    }
+
+    public static function make(): FilamentTranslationsPlugin
+    {
+        return new FilamentTranslationsPlugin;
+    }
+}
+</file>
+
+<file path="composer.json">
+{
+    "name": "tomatophp/filament-translations",
+    "type": "library",
+    "description": "Manage your translation with DB and cache, you can scan your languages tags like trans(), __(), and get the string inside and translate them use UI.",
+    "keywords": [
+        "php",
+        "laravel",
+        "translations",
+        "loader",
+        "translation manager",
+        "database translations",
+        "cache translations",
+        "translation UI",
+        "filament plugin",
+        "laravel-translation-loader",
+        "translate",
+        "database",
+        "db",
+        "language",
+        "i8n",
+        "spatie"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TomatoPHP\\FilamentTranslations\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TomatoPHP\\FilamentTranslations\\Tests\\": "tests/src/",
+            "TomatoPHP\\FilamentTranslations\\Tests\\Database\\Factories\\": "tests/database/factories",
+            "TomatoPHP\\FilamentTranslations\\Tests\\Database\\Seeders\\": "tests/database/seeders"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TomatoPHP\\FilamentTranslations\\FilamentTranslationsServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Fady Mondy",
+            "email": "info@3x1.io"
+        }
+    ],
+    "scripts": {
+        "testbench": "vendor/bin/testbench package:discover --ansi",
+        "db": "vendor/bin/testbench package:create-sqlite-db && vendor/bin/testbench migrate",
+        "analyse": "vendor/bin/phpstan analyse src tests",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "require": {
+        "php": "^8.1|^8.2|^8.3|^8.4",
+        "tomatophp/console-helpers": "^1.1",
+        "filament/filament": "^4.0",
+        "filament/notifications": "^4.0",
+        "tomatophp/filament-developer-gate": "^4.0",
+        "spatie/laravel-translation-loader": "^2.8",
+        "tomatophp/filament-translation-component": "^4.0",
+        "maatwebsite/excel": "^3.1"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.21",
+        "livewire/livewire": "^2.10|^3.0",
+        "nunomaduro/larastan": "^3.1",
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^3.7",
+        "pestphp/pest-plugin-laravel": "^3.1",
+        "pestphp/pest-plugin-livewire": "^3.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0"
+    },
+    "version": "v4.0.0"
+}
+</file>
+
+<file path="README.md">
+![Screenshot of Login](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/3x1io-tomato-translations.jpg)
+
+# Filament Translations Manager
+
+[![Dependabot Updates](https://github.com/tomatophp/filament-translations/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/tomatophp/filament-translations/actions/workflows/dependabot/dependabot-updates)
+[![PHP Code Styling](https://github.com/tomatophp/filament-translations/actions/workflows/fix-php-code-styling.yml/badge.svg)](https://github.com/tomatophp/filament-translations/actions/workflows/fix-php-code-styling.yml)
+[![Tests](https://github.com/tomatophp/filament-translations/actions/workflows/tests.yml/badge.svg)](https://github.com/tomatophp/filament-translations/actions/workflows/tests.yml)
+[![Latest Stable Version](https://poser.pugx.org/tomatophp/filament-translations/version.svg)](https://packagist.org/packages/tomatophp/filament-translations)
+[![License](https://poser.pugx.org/tomatophp/filament-translations/license.svg)](https://packagist.org/packages/tomatophp/filament-translations)
+[![Downloads](https://poser.pugx.org/tomatophp/filament-translations/d/total.svg)](https://packagist.org/packages/tomatophp/filament-translations)
+
+Manage your translation with DB and cache, you can scan your languages tags like `trans()`, `__()`, and get the string inside and translate them use UI.
+
+this plugin is build in [spatie/laravel-translation-loader](https://github.com/spatie/laravel-translation-loader)
+
+## Screenshots
+
+![Screenshot of list](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/translations-list.png)
+![Screenshot of create](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/create.png)
+![Screenshot of edit](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/edit.png)
+![Screenshot of scan](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/scan.png)
+![Screenshot of import](https://raw.githubusercontent.com/tomatophp/filament-translations/master/arts/import.png)
+
+## Installation
+
+```bash
+composer require tomatophp/filament-translations
+```
+
+now run install command
+
+```bash
+php artisan filament-translations:install
+```
+
+Finally register the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make())
+```
+
+## Extensions
+
+- [Filament ChatGPT Auto Translation](https://www.github.com/tomatophp/filament-translations-gpt)
+- [Filament Google Translations Auto Translation](https://www.github.com/tomatophp/filament-translations-google)
+
+### Allow Create Button to Create New Language
+
+If you want to allow the user to create a new language, you need to add the following to your panel provider:
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make()->allowCreate())
+```
+
+### Allow Clear All Translations Button
+
+If you want to allow the user to clear all translations, you need to add the following to your panel provider:
+
+```php
+$panel->plugin(\TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin::make()->allowClearTranslations())
+```
+
+## Use Language Switcher
+
+we move language switcher to another package you can check it [Filament Language Switcher](https://github.com/tomatophp/filament-language-switcher)
+
+
+## Scan Using Command Line
+
+You can scan your project to get all the languages tags and save them to the database
+
+```bash
+php artisan filament-translations:import
+```
+
+## Change Scan to work on Queue
+
+In your config file just change the `use_queue_on_scan` to `true`
+
+```php
+
+'use_queue_on_scan' => true,
+
+```
+
+## Custom Import Command
+
+You can create your own command to import the translations, add your custom import class to the config file like this:
+
+```php
+'path_to_custom_import_command' => ImportTranslations::class,
+```
+
+This command will automatically run when you click on the "Scan For New Languages" button in the UI.
+
+## Custom Excel Import
+
+You can create your own Excel import to import the translations, add your custom import class to the config file like this:
+
+```php
+'path_to_custom_excel_import' => CustomTranslationImport::class,
+```
+
+The import class is based on the Laravel Excel package.
+You can check the documentation [here](https://docs.laravel-excel.com/3.1/imports/).
+This import will automatically run when you click on the "Import" button in the UI.
+
+## Custom Excel Export
+
+You can create your own Excel export to export the translations in your own format, add your custom export class to the config file like this:
+
+```php
+'path_to_custom_excel_export' => CustomTranslationExport::class,
+```
+
+The export class is based on the Laravel Excel package.
+You can check the documentation [here](https://docs.laravel-excel.com/3.1/imports/).
+This import will automatically run when you click on the "Export" button in the UI.
+
+## Show or hide buttons in the UI
+
+You can show or hide the buttons in the UI by changing the config file. By default, all buttons are shown.
+
+```php
+'show_import_button' => true,
+'show_export_button' => false,
+'show_scan_button' => false ,
+```
+
+## Custom Resource
+
+You can create your own resource to show the translations in the UI, add your custom resource class to the config file like this:
+
+```php
+'translation_resource' => CustomResource::class,
+```
+
+This is especially useful when you want to have complete control over the UI but still want to use the translations package. Think about implementing a check on user roles when using `shouldRegisterNavigation` in your custom resource.
+
+## Translation Translations Resource Hooks
+
+we have add a lot of hooks to make it easy to attach actions, columns, filters, etc
+
+### Table Columns
+
+```php
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationTable;
+
+public function boot()
+{
+    TranslationTable::register([
+        \Filament\Tables\Columns\TextColumn::make('something')
+    ]);
+}
+```
+
+### Table Actions
+
+```php
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationActions;
+
+public function boot()
+{
+    TranslationActions::register([
+        \Filament\Tables\Actions\ReplicateAction::make()
+    ]);
+}
+```
+
+### Table Filters
+
+```php
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationFilters;
+
+public function boot()
+{
+    TranslationFilters::register([
+        \Filament\Tables\Filters\SelectFilter::make('something')
+    ]);
+}
+```
+
+### Table Bulk Actions
+
+```php
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationBulkActions;
+
+public function boot()
+{
+    TranslationBulkActions::register([
+        \Filament\Tables\BulkActions\DeleteAction::make()
+    ]);
+}
+```
+
+### From Components
+
+```php
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Form\TranslationForm;
+
+public function boot()
+{
+    TranslationForm::register([
+        \Filament\Forms\Components\TextInput::make('something')
+    ]);
+}
+```
+
+### Page Actions
+
+```php
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\ManagePageActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\EditPageActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\ViewPageActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\CreatePageActions;
+
+public function boot()
+{
+    ManagePageActions::register([
+        Filament\Actions\Action::make('action')
+    ]);
+    
+    EditPageActions::register([
+        Filament\Actions\Action::make('action')
+    ]);
+    
+    ViewPageActions::register([
+        Filament\Actions\Action::make('action')
+    ]);
+    
+    CreatePageActions::register([
+        Filament\Actions\Action::make('action')
+    ]);
+}
+```
+
+## Publish Assets
+
+You can publish views file by use this command:
+
+```bash
+php artisan vendor:publish --tag="filament-translations-views"
+```
+
+You can publish languages file by use this command:
+
+```bash
+php artisan vendor:publish --tag="filament-translations-lang"
+```
+
+You can publish migrations file by use this command:
+
+```bash
+php artisan vendor:publish --tag="filament-translations-migrations"
+```
+
+
+## Testing
+
+if you like to run `PEST` testing just use this command
+
+```bash
+composer test
+```
+
+## Code Style
+
+if you like to fix the code style just use this command
+
+```bash
+composer format
+```
+
+## PHPStan
+
+if you like to check the code by `PHPStan` just use this command
+
+```bash
+composer analyse
+```
+
+## Other Filament Packages
+
+Checkout our [Awesome TomatoPHP](https://github.com/tomatophp/awesome)
+</file>
+
+</files>

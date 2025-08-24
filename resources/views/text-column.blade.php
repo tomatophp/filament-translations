@@ -2,11 +2,13 @@
     @if(is_array($getState()))
         <div>
             @foreach($getState() as $key=>$item)
-                <div class="flex justifiy-start gap-4 my-2">
-                    <div class="border dark:border-gray-700 rounded-full" style="padding-left: 10px; padding-right: 10px">
-                        {{ config('filament-translations.locals')[$key]['label'] }}
+                <div class="fi-sidebar-group-btn ">
+                    <div>
+                        <x-filament::badge>
+                            {{ config('filament-translations.locals')[$key]['label'] }}
+                        </x-filament::badge>
                     </div>
-                    <div>{{ $item }}</div>
+                    <div x-tooltip="{content: '{{ $item }}', theme: $store.theme}">{{ \Str::limit($item, 30) }}</div>
                 </div>
             @endforeach
         </div>

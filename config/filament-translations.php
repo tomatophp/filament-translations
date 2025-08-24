@@ -119,7 +119,7 @@ return [
      | Translation resource.
      |
      */
-    'translation_resource' => \TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource::class,
+    'translation_resource' => \TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource::class,
 
     /*
      |--------------------------------------------------------------------------
@@ -136,4 +136,37 @@ return [
      |
      */
     'path_to_custom_excel_import' => null,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Use Developer Gate.
+     |
+     */
+    'use_developer_gate' => true,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | When use developer gate, hide the navigation.
+     |
+     */
+    'hide_navigation_when_developer_gate' => false,
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Navigation group.
+     | it can be a translation key if it's has just . on it.
+     |
+     */
+    'navigation_group' => 'Settings',
+
+    /*
+     |--------------------------------------------------------------------------
+     |
+     | Navigation icon.
+     |
+     */
+    'navigation_icon' => 'heroicon-m-language',
 ];

@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use TomatoPHP\FilamentTranslations\Console\FilamentTranslationsInstall;
 use TomatoPHP\FilamentTranslations\Console\ImportCommand;
 use TomatoPHP\FilamentTranslations\Console\ScanPath;
+use TomatoPHP\FilamentTranslations\Services\FilamentTranslationsServices;
 
 class FilamentTranslationsServiceProvider extends ServiceProvider
 {
@@ -57,5 +58,10 @@ class FilamentTranslationsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Config::set('filament-translation-component.languages', Config::get('filament-translations.locals'));
+
+        $this->app->singleton('filament-translations', function () {
+            return new FilamentTranslationsServices;
+        });
+
     }
 }

@@ -2,7 +2,10 @@
 
 namespace TomatoPHP\FilamentTranslations\Tests;
 
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource;
+use Filament\Facades\Filament;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
+use TomatoPHP\FilamentTranslations\FilamentTranslationsPlugin;
 use TomatoPHP\FilamentTranslations\Tests\Models\Translation;
 use TomatoPHP\FilamentTranslations\Tests\Models\User;
 
@@ -15,6 +18,13 @@ use function PHPUnit\Framework\assertNotEquals;
 
 beforeEach(function () {
     actingAs(User::factory()->create());
+
+    $this->panel = Filament::getCurrentOrDefaultPanel();
+    $this->panel->plugin(
+        FilamentTranslationsPlugin::make()
+            ->allowCreate()
+            ->allowClearTranslations()
+    );
 });
 
 it('can render translation resource', function () {
@@ -25,7 +35,7 @@ it('can list translations', function () {
     Translation::query()->delete();
     $translations = Translation::factory()->count(10)->create();
 
-    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
         ->loadTable()
         ->assertCanSeeTableRecords($translations)
         ->assertCountTableRecords(10);
@@ -34,37 +44,37 @@ it('can list translations', function () {
 it('can render user key/text column in table', function () {
     Translation::factory()->count(10)->create();
 
-    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
         ->loadTable()
         ->assertCanRenderTableColumn('key')
         ->assertCanRenderTableColumn('text');
 });
 
 it('can render translations list page', function () {
-    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)->assertSuccessful();
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)->assertSuccessful();
 });
 
 it('can render translation create page', function () {
     if (filament('filament-translations')->allowCreate) {
         if (config('filament-translations.modal')) {
-            livewire(TranslationResource\Pages\ManageTranslations::class)
+            livewire(Translations\Pages\ManageTranslations::class)
                 ->mountAction('create')
                 ->assertSuccessful();
         } else {
-            {
-                get(TranslationResource::getUrl('create'))->assertSuccessful();
-            }
+
+            get(TranslationResource::getUrl('create'))->assertSuccessful();
+
         }
     }
 });
 
 it('can render translation scan button', function () {
     if (config('filament-translations.modal')) {
-        livewire(TranslationResource\Pages\ManageTranslations::class)
+        livewire(Translations\Pages\ManageTranslations::class)
             ->mountAction('scan')
             ->assertSuccessful();
     } else {
-        livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)
+        livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
             ->mountAction('scan')
             ->assertSuccessful();
     }
@@ -74,11 +84,11 @@ it('can run scan', function () {
     Translation::query()->delete();
 
     if (config('filament-translations.modal')) {
-        livewire(TranslationResource\Pages\ManageTranslations::class)
+        livewire(Translations\Pages\ManageTranslations::class)
             ->callAction('scan')
             ->assertSuccessful();
     } else {
-        livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)
+        livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
             ->callAction('scan')
             ->assertSuccessful();
     }
@@ -91,11 +101,11 @@ it('can render translation clear button', function () {
 
     if (filament('filament-translations')->allowClearTranslations) {
         if (config('filament-translations.modal')) {
-            livewire(TranslationResource\Pages\ManageTranslations::class)
+            livewire(Translations\Pages\ManageTranslations::class)
                 ->callAction('clear')
                 ->assertSuccessful();
         } else {
-            livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)
+            livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
                 ->callAction('clear')
                 ->assertSuccessful();
         }
@@ -107,11 +117,11 @@ it('can render translation clear button', function () {
 it('can perform clear translation clear', function () {
     if (filament('filament-translations')->allowClearTranslations) {
         if (config('filament-translations.modal')) {
-            livewire(TranslationResource\Pages\ManageTranslations::class)
+            livewire(Translations\Pages\ManageTranslations::class)
                 ->mountAction('clear')
                 ->assertSuccessful();
         } else {
-            livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\ListTranslations::class)
+            livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations::class)
                 ->mountAction('clear')
                 ->assertSuccessful();
         }
@@ -121,7 +131,7 @@ it('can perform clear translation clear', function () {
 it('can create new translation', function () {
     $newData = Translation::factory()->make();
 
-    livewire(TranslationResource\Pages\CreateTranslation::class)
+    livewire(Translations\Pages\CreateTranslation::class)
         ->fillForm([
             'group' => $newData->group,
             'key' => $newData->key,
@@ -138,7 +148,7 @@ it('can create new translation', function () {
 });
 
 it('can validate translation input', function () {
-    livewire(TranslationResource\Pages\CreateTranslation::class)
+    livewire(Translations\Pages\CreateTranslation::class)
         ->fillForm([
             'group' => null,
             'key' => null,
@@ -152,24 +162,24 @@ it('can validate translation input', function () {
 
 it('can render translation edit page', function () {
     if (config('filament-translations.modal')) {
-        livewire(TranslationResource\Pages\ManageTranslations::class, [
+        livewire(Translations\Pages\ManageTranslations::class, [
             'record' => Translation::factory()->create(),
         ])
             ->mountAction('edit')
             ->assertSuccessful();
     } else {
-        {
-            get(TranslationResource::getUrl('edit', [
-                'record' => Translation::factory()->create(),
-            ]))->assertSuccessful();
-        }
+
+        get(TranslationResource::getUrl('edit', [
+            'record' => Translation::factory()->create(),
+        ]))->assertSuccessful();
+
     }
 });
 
 it('can retrieve translation data', function () {
     $translation = Translation::factory()->create();
 
-    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\EditTranslation::class, [
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\EditTranslation::class, [
         'record' => $translation->getRouteKey(),
     ])
         ->assertFormSet([
@@ -182,7 +192,7 @@ it('can retrieve translation data', function () {
 it('can validate edit translation input', function () {
     $translation = Translation::factory()->create();
 
-    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\EditTranslation::class, [
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\EditTranslation::class, [
         'record' => $translation->getRouteKey(),
     ])
         ->fillForm([
@@ -200,7 +210,7 @@ it('can save translation data', function () {
     $translation = Translation::factory()->create();
     $newData = Translation::factory()->make();
 
-    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Pages\EditTranslation::class, [
+    livewire(\TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\EditTranslation::class, [
         'record' => $translation->getRouteKey(),
     ])
 

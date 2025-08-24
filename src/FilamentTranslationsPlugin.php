@@ -4,13 +4,17 @@ namespace TomatoPHP\FilamentTranslations;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\Components\ClearAction;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\Components\CreateAction;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\Components\ScanAction;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Actions\ManagePageActions;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\HeaderActions\ExportAction;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\HeaderActions\ImportAction;
-use TomatoPHP\FilamentTranslations\Filament\Resources\TranslationResource\Table\TranslationHeaderActions;
+use TomatoPHP\FilamentDeveloperGate\Actions\DeveloperLogoutAction;
+use TomatoPHP\FilamentTranslations\Facade\FilamentTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\ClearAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\CreateAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions\ScanAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ListTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Pages\ManageTranslations;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\HeaderActions\ExportAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\HeaderActions\ImportAction;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\TranslationHeaderActions;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
 
 class FilamentTranslationsPlugin implements Plugin
 {
@@ -26,7 +30,7 @@ class FilamentTranslationsPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel->resources([
-            config('filament-translations.translation_resource'),
+            config('filament-translations.translation_resource') ?: TranslationResource::class,
         ]);
     }
 
@@ -46,6 +50,7 @@ class FilamentTranslationsPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
+
         if (config('filament-translations.import_enabled')) {
             TranslationHeaderActions::register(ImportAction::make());
         }
@@ -55,15 +60,23 @@ class FilamentTranslationsPlugin implements Plugin
         }
 
         if (config('filament-translations.scan_enabled')) {
-            ManagePageActions::register(ScanAction::make());
+            FilamentTranslations::register(ScanAction::make(), ListTranslations::class);
+            FilamentTranslations::register(ScanAction::make(), ManageTranslations::class);
         }
 
         if (filament('filament-translations')->allowClearTranslations) {
-            ManagePageActions::register(ClearAction::make());
+            FilamentTranslations::register(ClearAction::make(), ListTranslations::class);
+            FilamentTranslations::register(ClearAction::make(), ManageTranslations::class);
         }
 
         if (filament('filament-translations')->allowCreate) {
-            ManagePageActions::register(CreateAction::make());
+            FilamentTranslations::register(CreateAction::make(), ListTranslations::class);
+            FilamentTranslations::register(CreateAction::make(), ManageTranslations::class);
+        }
+
+        if (config('filament-translations.use_developer_gate')) {
+            FilamentTranslations::register(DeveloperLogoutAction::make(), ListTranslations::class);
+            FilamentTranslations::register(DeveloperLogoutAction::make(), ManageTranslations::class);
         }
     }
 
