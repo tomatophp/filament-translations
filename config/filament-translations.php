@@ -143,7 +143,7 @@ return [
      | Use Developer Gate.
      |
      */
-    'use_developer_gate' => true,
+    'use_developer_gate' => false,
 
     /*
      |--------------------------------------------------------------------------
