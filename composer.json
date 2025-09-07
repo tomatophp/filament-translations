@@ -83,5 +83,5 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0"
     },
-    "version": "v4.0.0"
+    "version": "v4.0.1"
 }
