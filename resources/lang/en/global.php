@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'group' => 'Group',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
     'filter_by_group' => 'Filter by Group',

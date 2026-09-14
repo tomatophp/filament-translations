@@ -8,25 +8,31 @@ use Spatie\TranslationLoader\LanguageLine;
 
 class TranslationsImport implements ToCollection
 {
-    public function collection(Collection $rows)
+    public function collection(Collection $rows): void
     {
         unset($rows[0]);
-        $getLocals = config('filament-translations.locals');
 
-        foreach ($rows as $key => $row) {
-            $langs = config('filament-translations.locals');
-            $id = $row[0];
-            $getTranslation = LanguageLine::find($id);
-            $mergeTranslation = [];
-            $count = 1;
-            foreach ($langs as $langKey => $lang) {
-                if (isset($row[$count + 1]) && ! empty($row[$count + 1])) {
-                    $mergeTranslation[$langKey] = $row[$count + 1];
-                }
-                $count++;
+        $locales = array_keys(config('filament-translations.locals'));
+
+        foreach ($rows as $row) {
+            $translation = LanguageLine::find($row[0] ?? null);
+
+            if (! $translation) {
+                continue;
             }
-            $getTranslation->text = $mergeTranslation;
-            $getTranslation->save();
+
+            // Columns: id, key, then one column per configured locale. Empty cells keep the stored text.
+            $imported = [];
+            foreach ($locales as $index => $locale) {
+                $value = $row[$index + 2] ?? null;
+
+                if (filled($value)) {
+                    $imported[$locale] = $value;
+                }
+            }
+
+            $translation->text = array_merge($translation->text ?? [], $imported);
+            $translation->save();
         }
     }
 }

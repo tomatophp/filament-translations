@@ -3,12 +3,9 @@
 namespace TomatoPHP\FilamentTranslations\Console;
 
 use Illuminate\Console\Command;
-use TomatoPHP\ConsoleHelpers\Traits\RunCommand;
 
 class FilamentTranslationsInstall extends Command
 {
-    use RunCommand;
-
     /**
      * The name and signature of the console command.
      *
@@ -23,22 +20,19 @@ class FilamentTranslationsInstall extends Command
      */
     protected $description = 'install package and publish assets';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
-        $this->info('Publish Vendor Assets');
-        $this->artisanCommand(['migrate']);
+        $this->info('Running migrations');
+        $this->call('migrate', ['--force' => true]);
+
         $this->info('Scanning for translations');
-        $this->artisanCommand(['filament-translations:import']);
+        $this->call('filament-translations:import');
+
         $this->info('Filament Translations Manager installed successfully.');
+
+        return self::SUCCESS;
     }
 }

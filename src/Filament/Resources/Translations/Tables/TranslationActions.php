@@ -2,10 +2,15 @@
 
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
 
+use Filament\Actions\Action;
+use Illuminate\Support\Arr;
+
 class TranslationActions
 {
     /**
-     * @var array
+     * Keyed by action name so a repeated registration (Octane) replaces instead of duplicating.
+     *
+     * @var array<string, Action>
      */
     protected static $actions = [];
 
@@ -24,19 +29,15 @@ class TranslationActions
 
     private static function getActions(): array
     {
-        return array_merge(self::getDefaultActions(), self::$actions);
+        return array_values(array_merge(self::getDefaultActions(), self::$actions));
     }
 
-    public static function register(\Filament\Actions\Action | array $action): void
+    public static function register(Action | array $action): void
     {
-        if (is_array($action)) {
-            foreach ($action as $item) {
-                if ($item instanceof \Filament\Actions\Action) {
-                    self::$actions[] = $item;
-                }
+        foreach (Arr::wrap($action) as $item) {
+            if ($item instanceof Action) {
+                self::$actions[$item->getName()] = $item;
             }
-        } else {
-            self::$actions[] = $action;
         }
     }
 }

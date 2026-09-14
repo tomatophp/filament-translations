@@ -39,7 +39,7 @@ class ScanPath extends Command
         $path = $this->argument('path');
 
         if (! $path) {
-            text('Please enter path to scan', required: true);
+            $path = text('Please enter path to scan', required: true);
         }
 
         $checkIfPathExists = File::exists($path);
@@ -79,7 +79,7 @@ class ScanPath extends Command
 
         $checkIfPathHasLang = File::exists($path . '/resources/lang');
         if (! $checkIfPathHasLang) {
-            File::makeDirectory($path . '/resources/lang');
+            File::makeDirectory($path . '/resources/lang', 0755, true);
         }
 
         $jsonFileContent = json_encode($collectKeys->toArray(), JSON_PRETTY_PRINT);

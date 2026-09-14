@@ -3,16 +3,22 @@
 namespace TomatoPHP\FilamentTranslations;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use TomatoPHP\FilamentTranslations\Console\FilamentTranslationsInstall;
 use TomatoPHP\FilamentTranslations\Console\ImportCommand;
 use TomatoPHP\FilamentTranslations\Console\ScanPath;
+use TomatoPHP\FilamentTranslations\Models\Translation;
 use TomatoPHP\FilamentTranslations\Services\FilamentTranslationsServices;
 
 class FilamentTranslationsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton('filament-translations', function () {
+            return new FilamentTranslationsServices;
+        });
+
         // Register ConfigTomatoPHP file
         $this->mergeConfigFrom(__DIR__ . '/../config/filament-translations.php', 'filament-translations');
 
@@ -59,9 +65,24 @@ class FilamentTranslationsServiceProvider extends ServiceProvider
     {
         Config::set('filament-translation-component.languages', Config::get('filament-translations.locals'));
 
-        $this->app->singleton('filament-translations', function () {
-            return new FilamentTranslationsServices;
-        });
+        $this->registerPolicy();
+    }
 
+    /**
+     * Laravel only auto-discovers policies next to the model's namespace, so a policy for this
+     * package's model is never found on its own (#44). Register the configured one, or the
+     * conventional App\Policies\TranslationPolicy when the app has it.
+     */
+    protected function registerPolicy(): void
+    {
+        $policy = Config::get('filament-translations.policy');
+
+        if (! $policy && Gate::getPolicyFor(Translation::class) === null && class_exists('App\\Policies\\TranslationPolicy')) {
+            $policy = 'App\\Policies\\TranslationPolicy';
+        }
+
+        if ($policy) {
+            Gate::policy(Translation::class, $policy);
+        }
     }
 }

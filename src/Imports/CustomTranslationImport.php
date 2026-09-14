@@ -30,7 +30,7 @@ class CustomTranslationImport implements SkipsOnFailure, ToCollection, WithHeadi
     /**
      * @param  Failure[]  $failures
      */
-    public function onFailure(Failure ...$failures)
+    public function onFailure(Failure ...$failures): void
     {
         // Ignore errors and continue importing
     }

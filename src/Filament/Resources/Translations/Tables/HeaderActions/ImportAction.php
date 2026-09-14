@@ -4,6 +4,7 @@ namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables\
 
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
 use TomatoPHP\FilamentTranslations\Services\ExcelImportExportService;
 
 class ImportAction extends Action
@@ -12,7 +13,8 @@ class ImportAction extends Action
     {
         return Actions\Action::make('import')
             ->label(trans('filament-translations::translation.import'))
-            ->form([
+            ->authorize(fn (): bool => (config('filament-translations.translation_resource') ?: TranslationResource::class)::canCreate())
+            ->schema([
                 FileUpload::make('file')
                     ->label(trans('filament-translations::translation.import-file'))
                     ->acceptedFileTypes([

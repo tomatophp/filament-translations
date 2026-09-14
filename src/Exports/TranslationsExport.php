@@ -2,6 +2,7 @@
 
 namespace TomatoPHP\FilamentTranslations\Exports;
 
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -9,10 +10,7 @@ use Spatie\TranslationLoader\LanguageLine;
 
 class TranslationsExport implements FromCollection, WithHeadings, WithMapping
 {
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function collection()
+    public function collection(): Collection
     {
         return LanguageLine::all();
     }

@@ -10,7 +10,7 @@ class Group extends Component
     public static function make(): Forms\Components\TextInput
     {
         return Forms\Components\TextInput::make('group')
-            ->label(trans('filament-translations::translation.group'))
+            ->label(trans('filament-translations::global.group'))
             ->required()
             ->disabled(fn (Get $get) => $get('id') !== null)
             ->maxLength(255);

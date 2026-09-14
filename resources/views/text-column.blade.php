@@ -5,10 +5,10 @@
                 <div class="fi-sidebar-group-btn ">
                     <div>
                         <x-filament::badge>
-                            {{ config('filament-translations.locals')[$key]['label'] }}
+                            {{ config('filament-translations.locals')[$key]['label'] ?? $key }}
                         </x-filament::badge>
                     </div>
-                    <div x-tooltip="{content: '{{ $item }}', theme: $store.theme}">{{ \Str::limit($item, 30) }}</div>
+                    <div x-tooltip="{content: {{ \Illuminate\Support\Js::from((string) $item) }}, theme: $store.theme}">{{ \Illuminate\Support\Str::limit((string) $item, 30) }}</div>
                 </div>
             @endforeach
         </div>

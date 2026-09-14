@@ -71,11 +71,21 @@ class SaveScan
                 $translation->restore();
             }
         } else {
+            // Resolve the text with the full key (namespace::group.key), not only the key part,
+            // otherwise group keys get their own key as text (e.g. "user.navigation.label").
+            $fullKey = $mainKey ?? $key;
             $locals = config('filament-translations.locals');
             $text = [];
             foreach ($locals as $locale => $lang) {
-                $translation = Lang::get(key: $key, locale: $locale, fallback: str($key)->replace('.', ' ')->replace('_', ' ')->title()->toString());
-                $text[$locale] = ! is_array($translation) ? $translation : '';
+                $value = Lang::get($fullKey, [], $locale);
+
+                if (is_array($value)) {
+                    $value = '';
+                } elseif ($value === $fullKey && $group !== '*') {
+                    $value = str($key)->replace('.', ' ')->replace('_', ' ')->title()->toString();
+                }
+
+                $text[$locale] = $value;
             }
             $translation = Translation::query()->create([
                 'namespace' => $namespace,

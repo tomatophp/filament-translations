@@ -4,6 +4,7 @@ namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Actions
 
 use Filament\Actions;
 use Filament\Notifications\Notification;
+use TomatoPHP\FilamentTranslations\Filament\Resources\Translations\TranslationResource;
 use TomatoPHP\FilamentTranslations\Jobs\ScanJob;
 use TomatoPHP\FilamentTranslations\Services\SaveScan;
 
@@ -15,6 +16,7 @@ class ScanAction extends Action
     {
         return Actions\Action::make('scan')
             ->requiresConfirmation()
+            ->authorize(fn (): bool => (config('filament-translations.translation_resource') ?: TranslationResource::class)::canCreate())
             ->icon('heroicon-m-magnifying-glass')
             ->hiddenLabel()
             ->tooltip(trans('filament-translations::translation.scan'))

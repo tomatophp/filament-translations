@@ -14,6 +14,7 @@ return [
     'gpt_scan' => 'Use GPT',
     'gpt_scan_notification_start' => 'GPT Scan has been started',
     'gpt_scan_notifications_done' => 'GPT Scan has been completed',
+    'gpt_scan_notification_error' => 'GPT Scan has failed',
     'google_scan' => 'Use Google Translate',
     'google_scan_notifications_start' => 'Google-Translate scan has been started',
     'google_scan_notifications_done' => 'Google-Translate scan has been completed',

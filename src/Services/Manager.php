@@ -8,7 +8,7 @@ use TomatoPHP\FilamentTranslations\Models\Translation;
 
 class Manager
 {
-    /** @var \Illuminate\Filesystem\Filesystem */
+    /** @var Filesystem */
     protected $files;
 
     protected $locales;

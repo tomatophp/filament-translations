@@ -4,9 +4,15 @@ namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
 
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 
 class TranslationsTable
 {
+    /**
+     * Keyed by column name so a repeated registration (Octane) replaces instead of duplicating.
+     *
+     * @var array<string, Column>
+     */
     protected static array $columns = [];
 
     public static function configure(Table $table): Table
@@ -17,7 +23,6 @@ class TranslationsTable
             ->recordActions(TranslationActions::make())
             ->filters(TranslationFilters::make())
             ->headerActions(TranslationHeaderActions::make())
-            ->deferLoading()
             ->defaultSort('key')
             ->striped()
             ->columns(self::getColumns());
@@ -35,19 +40,15 @@ class TranslationsTable
 
     private static function getColumns(): array
     {
-        return array_merge(self::getDefaultColumns(), self::$columns);
+        return array_values(array_merge(self::getDefaultColumns(), self::$columns));
     }
 
     public static function register(Column | array $column): void
     {
-        if (is_array($column)) {
-            foreach ($column as $item) {
-                if ($item instanceof Column) {
-                    self::$columns[] = $item;
-                }
+        foreach (Arr::wrap($column) as $item) {
+            if ($item instanceof Column) {
+                self::$columns[$item->getName()] = $item;
             }
-        } else {
-            self::$columns[] = $column;
         }
     }
 }

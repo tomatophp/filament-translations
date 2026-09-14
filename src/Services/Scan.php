@@ -84,7 +84,7 @@ class Scan
             ')' . // Close group
             '[\"]' . // Closing quote
 
-            '[\)]';  // Close parentheses or new parameter
+            '[\),]';  // Close parentheses or new parameter
 
         $patternC =
             // See https://regex101.com/r/VaPQ7A/2
@@ -100,7 +100,7 @@ class Scan
             ')' . // Close group
             '[\']' . // Closing quote
 
-            '[\)]';  // Close parentheses or new parameter
+            '[\),]';  // Close parentheses or new parameter
 
         $trans = collect();
         $__ = collect();
@@ -131,6 +131,12 @@ class Scan
             }
         }
 
-        return [$trans->flatten()->unique(), $__->flatten()->unique()];
+        $trans = $trans->flatten()->unique()->values();
+
+        // A group key like __('messages.welcome') matches both the group pattern and the JSON pattern;
+        // keep it only as a group key so the scan does not store it twice.
+        $__ = $__->flatten()->unique()->diff($trans)->values();
+
+        return [$trans, $__];
     }
 }

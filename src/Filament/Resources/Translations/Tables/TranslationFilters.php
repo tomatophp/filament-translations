@@ -2,10 +2,15 @@
 
 namespace TomatoPHP\FilamentTranslations\Filament\Resources\Translations\Tables;
 
+use Filament\Tables\Filters\BaseFilter;
+use Illuminate\Support\Arr;
+
 class TranslationFilters
 {
     /**
-     * @var array
+     * Keyed by filter name so a repeated registration (Octane) replaces instead of duplicating.
+     *
+     * @var array<string, BaseFilter>
      */
     protected static $filters = [];
 
@@ -24,19 +29,15 @@ class TranslationFilters
 
     private static function getFilters(): array
     {
-        return array_merge(self::getDefaultFilters(), self::$filters);
+        return array_values(array_merge(self::getDefaultFilters(), self::$filters));
     }
 
-    public static function register(\Filament\Tables\Filters\BaseFilter | array $action): void
+    public static function register(BaseFilter | array $filter): void
     {
-        if (is_array($action)) {
-            foreach ($action as $item) {
-                if ($item instanceof \Filament\Tables\Filters\BaseFilter) {
-                    self::$filters[] = $item;
-                }
+        foreach (Arr::wrap($filter) as $item) {
+            if ($item instanceof BaseFilter) {
+                self::$filters[$item->getName()] = $item;
             }
-        } else {
-            self::$filters[] = $action;
         }
     }
 }
