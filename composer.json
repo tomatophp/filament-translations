@@ -2,6 +2,12 @@
     "name": "tomatophp/filament-translations",
     "type": "library",
     "description": "Manage your translation with DB and cache, you can scan your languages tags like trans(), __(), and get the string inside and translate them use UI.",
+    "homepage": "https://tomatophp.com/en/plugins/filament-translations",
+    "support": {
+        "issues": "https://github.com/tomatophp/filament-translations/issues",
+        "source": "https://github.com/tomatophp/filament-translations",
+        "docs": "https://tomatophp.com/en/plugins/filament-translations"
+    },
     "keywords": [
         "php",
         "laravel",
